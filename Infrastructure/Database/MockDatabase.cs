@@ -22,7 +22,7 @@ namespace Infrastructure.Database
         {
             new Cat { Id = Guid.NewGuid(), Name = "Bulle", LikesToPlay = true },
             new Cat { Id = Guid.NewGuid(), Name = "Mulle", LikesToPlay = false },
-            new Cat { Id = Guid.NewGuid(), Name = "Hans", LikesToPlay= false }, 
+            new Cat { Id = Guid.NewGuid(), Name = "Hans", LikesToPlay= false },
             new Cat { Id = Guid.NewGuid(), Name = "Musse", LikesToPlay = true },
             new Cat { Id = new Guid("12345678-1234-5678-1234-567812345679"), Name = "TestCatForUnitTests", LikesToPlay = true }
 
