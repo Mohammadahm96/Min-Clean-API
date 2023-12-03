@@ -54,6 +54,7 @@ namespace API.Controllers.DogsController
         }
 
         // IMPLEMENT DELETE !!!
+        // Testar
 
     }
 }
