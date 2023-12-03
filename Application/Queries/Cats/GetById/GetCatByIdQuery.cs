@@ -9,7 +9,7 @@ namespace Application.Queries.Cats.GetCatById
 
         public GetCatByIdQuery(Guid catId)
         {
-            Id = catId;            
+            Id = catId;       
         }
     }
 }
