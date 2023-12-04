@@ -25,7 +25,6 @@ namespace Test.BirdTests.GetBirdByIdTests
         {
             // Arrange
             var birdId = new Guid("12345678-1234-5678-1234-567812345680");
-            
 
             var query = new GetBirdByIdQuery(birdId);
 
