@@ -7,8 +7,6 @@ using Application.Queries.Dogs.GetById;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-
 namespace API.Controllers.DogsController
 {
     [Route("api/[controller]")]
@@ -38,11 +36,15 @@ namespace API.Controllers.DogsController
             return Ok(await _mediator.Send(new GetDogByIdQuery(dogId)));
         }
 
-        // Create a new dog 
+        // Create a new dog
         [HttpPost]
         [Route("addNewDog")]
         public async Task<IActionResult> AddDog([FromBody] DogDto newDog)
         {
+            if (newDog == null)
+            {
+                return BadRequest("newDog field is required");
+            }
             return Ok(await _mediator.Send(new AddDogCommand(newDog)));
         }
 
@@ -54,7 +56,7 @@ namespace API.Controllers.DogsController
             return Ok(await _mediator.Send(new UpdateDogByIdCommand(updatedDog, updatedDogId)));
         }
 
-        // Delete a dog       
+        // Delete a dog
         [HttpDelete]
         [Route("deleteDog/{dogId}")]
         public async Task<IActionResult> DeleteDogById(Guid dogId)
@@ -68,7 +70,5 @@ namespace API.Controllers.DogsController
 
             return NotFound("Dog not found or deletion failed.");
         }
-
-
     }
 }
