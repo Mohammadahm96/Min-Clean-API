@@ -24,7 +24,8 @@ namespace Infrastructure.Database
             new Cat { Id = Guid.NewGuid(), Name = "Mulle", LikesToPlay = false },
             new Cat { Id = Guid.NewGuid(), Name = "Hans", LikesToPlay= false },
             new Cat { Id = Guid.NewGuid(), Name = "Musse", LikesToPlay = true },
-            new Cat { Id = new Guid("12345678-1234-5678-1234-567812345679"), Name = "TestCatForUnitTests", LikesToPlay = true }
+            new Cat { Id = new Guid("12345678-1234-5678-1234-567812345679"), Name = "TestCatForUnitTests", LikesToPlay = true },
+            new Cat { Id = new Guid("12345678-1234-5678-1234-567812345675"), Name = "TestCatForUnitTests", LikesToPlay = true }
 
 
         };
@@ -41,7 +42,8 @@ namespace Infrastructure.Database
             new Bird { Id = Guid.NewGuid(), Name = "Polly", CanFly = false },
             new Bird { Id = Guid.NewGuid(), Name = "Mattias", CanFly = true},
             new Bird { Id = Guid.NewGuid(), Name = "Fly", CanFly= true },
-            new Bird { Id = new Guid("12345678-1234-5678-1234-567812345680"), Name = "TestBirdForUnitTests", CanFly = true }
+            new Bird { Id = new Guid("12345678-1234-5678-1234-567812345680"), Name = "TestBirdForUnitTests", CanFly = true },
+            new Bird { Id = new Guid("12345678-1234-5678-1234-567812345681"), Name = "TestBirdForUnitTests", CanFly = true }
         };
 
         public List<Bird> Birds
