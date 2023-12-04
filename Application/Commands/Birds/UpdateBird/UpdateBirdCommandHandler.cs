@@ -24,8 +24,7 @@ namespace Application.Commands.Birds.UpdateBird
                 birdToUpdate.CanFly = request.UpdatedBird.CanFly;
             }
             return Task.FromResult(birdToUpdate);
-        }
-            
+        }    
        
     }
 }

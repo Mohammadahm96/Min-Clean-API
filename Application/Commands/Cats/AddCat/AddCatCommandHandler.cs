@@ -21,7 +21,6 @@ namespace Application.Commands.Cats
                 Id = Guid.NewGuid(),
                 Name = request.NewCat.Name,
                 LikesToPlay = request.NewCat.LikesToPlay
-                
             };
 
             _mockDatabase.Cats.Add(newCat);

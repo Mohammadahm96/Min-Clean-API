@@ -1,6 +1,6 @@
 ﻿using Application.Dtos;
 using MediatR;
-using Domain.Models;  
+using Domain.Models;
 
 
 namespace Application.Commands.Cats.UpdateCats
@@ -15,7 +15,5 @@ namespace Application.Commands.Cats.UpdateCats
 
         public Guid Id { get; }
         public CatDto UpdatedCat { get; }
-        
     }
-   
 }
