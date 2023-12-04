@@ -36,19 +36,18 @@ namespace API.Controllers.CatsController
             return Ok(await _mediator.Send(new GetCatByIdQuery(catId)));
         }
 
-        // Create a new cat 
+        // Create a new cat
         [HttpPost]
         [Route("addNewCat")]
         public async Task<IActionResult> AddCat([FromBody] CatDto newCat)
         {
-            if(newCat == null)
+            if (newCat == null)
             {
                 return BadRequest("The newCat field is required");
             }
             return Ok(await _mediator.Send(new AddCatCommand(newCat)));
         }
         
-
         // Update a specific cat
         [HttpPut]
         [Route("updateCat/{updatedCatId}")]
@@ -61,7 +60,6 @@ namespace API.Controllers.CatsController
 
             return Ok(await _mediator.Send(new UpdateCatCommand(updatedCat, updatedCatId)));
         }
-
 
         // Delete a specific cat by Id
         [HttpDelete]
