@@ -25,7 +25,6 @@ namespace Application.Commands.Birds.UpdateBird
             }
             return Task.FromResult(birdToUpdate);
         }
-       
     }
 }
 
