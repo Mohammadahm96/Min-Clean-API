@@ -8,7 +8,7 @@ namespace Application.Validators.User
         public RegisterUserCommandValidator()
         {
             RuleFor(command => command.NewUser.UserName).NotEmpty().WithMessage("Username cannot be empty");
-            RuleFor(command => command.NewUser.Password).NotEmpty().WithMessage("Password cannot be empty");   
+            RuleFor(command => command.NewUser.Password).NotEmpty().WithMessage("Password cannot be empty");
         }
     }
 }
