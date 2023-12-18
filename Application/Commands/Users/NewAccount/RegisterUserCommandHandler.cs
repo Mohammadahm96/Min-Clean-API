@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 
 namespace Application.Commands.Users.Register
+
 {
     public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, UserModel>
     {
