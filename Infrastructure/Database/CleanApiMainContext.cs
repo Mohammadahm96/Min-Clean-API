@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Domain.Models;
+using Domain.Models.User;
 
 
 
@@ -14,6 +15,7 @@ namespace Infrastructure.Database
         public virtual DbSet<Dog> Dogs { get; set; } // DbSet for the User table
         public virtual DbSet<Bird> Birds { get; set; }
         public virtual DbSet<Cat> Cats { get; set; }
+        public virtual DbSet <UserModel> Users {  get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             string connectionString = "Server=localhost;Port=3306;Database=Cleandb;User=root;Password=12345;";

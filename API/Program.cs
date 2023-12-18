@@ -3,6 +3,9 @@ using Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Infrastructure.Database;
+using Microsoft.EntityFrameworkCore;
+using Application.Commands.Users.Register;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,10 +18,16 @@ builder.Services.AddSwaggerGen();
 
 // Min ConnectionString
 var configuration = builder.Configuration;
-var connectionString = configuration.GetConnectionString("Server=(localdb)\\sqlexpress;Database=CleanDb;Trusted_Connection=True;");
+var connectionString = configuration.GetConnectionString("Server=localhost;Port=3306;Database=Cleandb;User=root;Password=12345;");
 
 
 builder.Services.AddApplication().AddInfrastructure();
+
+// Register CleanApiMainContext
+builder.Services.AddDbContext<CleanApiMainContext>(options =>
+{
+    options.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 32)));
+});
 
 var app = builder.Build();
 

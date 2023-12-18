@@ -4,6 +4,7 @@ using Application.Commands.Dogs.UpdateDog;
 using Application.Dtos;
 using Application.Queries.Dogs.GetAll;
 using Application.Queries.Dogs.GetById;
+using Application.Validators.Dog;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,9 +15,11 @@ namespace API.Controllers.DogsController
     public class DogsController : ControllerBase
     {
         internal readonly IMediator _mediator;
-        public DogsController(IMediator mediator)
+        internal readonly DogValidator _dogValidator;
+        public DogsController(IMediator mediator, DogValidator dogValidator)
         {
             _mediator = mediator;
+            _dogValidator = dogValidator;
         }
 
         // Get all dogs from database
@@ -24,8 +27,19 @@ namespace API.Controllers.DogsController
         [Route("getAllDogs")]
         public async Task<IActionResult> GetAllDogs()
         {
-            return Ok(await _mediator.Send(new GetAllDogsQuery()));
-            //return Ok("GET ALL DOGS");
+            try
+            {
+                // Försök hämta alla hundar från databasen
+                var dogs = await _mediator.Send(new GetAllDogsQuery());
+
+                // Returnera hundarna om hämtningen lyckades
+                return Ok(dogs);
+            }
+            catch (Exception ex)
+            {
+                // Om det uppstår ett fel, returnera ett felmeddelande
+                return BadRequest($"Error getting dogs: {ex.Message}");
+            }
         }
 
         // Get a dog by Id
@@ -41,20 +55,68 @@ namespace API.Controllers.DogsController
         [Route("addNewDog")]
         public async Task<IActionResult> AddDog([FromBody] DogDto newDog)
         {
-            if (newDog == null)
+            //Validate Dog
+            var validatedDog = _dogValidator.Validate(newDog);
+
+            //Error handling
+            if (!validatedDog.IsValid)
             {
-                return BadRequest("newDog field is required");
+                return BadRequest(validatedDog.Errors.ConvertAll(errors => errors.ErrorMessage));
             }
-            return Ok(await _mediator.Send(new AddDogCommand(newDog)));
+
+            //Try Catch
+            try
+            {
+                return Ok(await _mediator.Send(new AddDogCommand(newDog)));
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+
         }
 
         // Update a specific dog
         [HttpPut]
-        [Route("updateDog/{updatedDogId}")]
-        public async Task<IActionResult> UpdateDog([FromBody] DogDto updatedDog, Guid updatedDogId)
+        [Route("updateDog/{dogId}")]
+        public async Task<IActionResult> UpdateDog(Guid dogId, [FromBody] DogDto updatedDog)
         {
-            return Ok(await _mediator.Send(new UpdateDogByIdCommand(updatedDog, updatedDogId)));
+            // Validate Dog ID
+            var validatedDogId = new GuidValidator().Validate(dogId);
+            if (!validatedDogId.IsValid)
+            {
+                return BadRequest(validatedDogId.Errors.ConvertAll(errors => errors.ErrorMessage));
+            }
+
+            // Validate Updated Dog
+            var validatedUpdatedDog = _dogValidator.Validate(updatedDog);
+            if (!validatedUpdatedDog.IsValid)
+            {
+                return BadRequest(validatedUpdatedDog.Errors.ConvertAll(errors => errors.ErrorMessage));
+            }
+
+            // Try Catch
+            try
+            {
+                var command = new UpdateDogByIdCommand(updatedDog, dogId);
+                var result = await _mediator.Send(command);
+
+                if (result != null)
+                {
+                    return Ok(result);
+                }
+                else
+                {
+                    return NotFound("Dog not found.");
+                }
+            }
+            catch (Exception ex)
+            {
+                // Här kan du använda ditt eget felmeddelande för exceptions om du vill
+                return BadRequest($"Error updating dog: {ex.Message}");
+            }
         }
+
 
         // Delete a dog
         [HttpDelete]
