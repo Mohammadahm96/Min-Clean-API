@@ -1,6 +1,8 @@
 ﻿using Infrastructure.Database;
+using Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Shared.Repositories;
 
 namespace Infrastructure
 {
@@ -13,6 +15,7 @@ namespace Infrastructure
 
             // Register the DatabaseConfiguration
             //services.AddScoped<IDatabaseConfiguration, DatabaseConfiguration>();
+            services.AddScoped<IUserRepository, UserRepository>();
 
             // Register the DbContext
             services.AddDbContext<CleanApiMainContext>(options =>

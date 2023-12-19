@@ -1,25 +1,25 @@
-﻿using MediatR;
-using Infrastructure.Database;
-
+﻿using Infrastructure.Database;
+using MediatR;
 
 namespace Application.Commands.Cats.DeleteCats
 {
     public class DeleteCatCommandHandler : IRequestHandler<DeleteCatCommand, DeleteCatResult>
     {
-        private readonly MockDatabase _mockDatabase;
+        private readonly CleanApiMainContext _dbContext;
 
-        public DeleteCatCommandHandler(MockDatabase mockDatabase)
+        public DeleteCatCommandHandler(CleanApiMainContext dbContext)
         {
-            _mockDatabase = mockDatabase;
+            _dbContext = dbContext;
         }
 
         public async Task<DeleteCatResult> Handle(DeleteCatCommand request, CancellationToken cancellationToken)
         {
-            var catToDelete = _mockDatabase.Cats.FirstOrDefault(c => c.Id == request.CatId);
+            var catToDelete = _dbContext.Cats.FirstOrDefault(c => c.Id == request.CatId);
 
             if (catToDelete != null)
             {
-                _mockDatabase.Cats.Remove(catToDelete);
+                _dbContext.Cats.Remove(catToDelete);
+                await _dbContext.SaveChangesAsync();
                 return new DeleteCatResult { IsSuccess = true };
             }
 
@@ -27,3 +27,4 @@ namespace Application.Commands.Cats.DeleteCats
         }
     }
 }
+

@@ -1,22 +1,25 @@
-﻿using Domain.Models;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using Domain.Models;
 using Infrastructure.Database;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace Application.Queries.Dogs.GetById
 {
     public class GetDogByIdQueryHandler : IRequestHandler<GetDogByIdQuery, Dog>
     {
-        private readonly MockDatabase _mockDatabase;
+        private readonly CleanApiMainContext _dbContext;
 
-        public GetDogByIdQueryHandler(MockDatabase mockDatabase)
+        public GetDogByIdQueryHandler(CleanApiMainContext dbContext)
         {
-            _mockDatabase = mockDatabase;
+            _dbContext = dbContext;
         }
 
-        public Task<Dog> Handle(GetDogByIdQuery request, CancellationToken cancellationToken)
+        public async Task<Dog> Handle(GetDogByIdQuery request, CancellationToken cancellationToken)
         {
-            Dog wantedDog = _mockDatabase.Dogs.FirstOrDefault(dog => dog.Id == request.Id)!;
-            return Task.FromResult(wantedDog);
+            Dog wantedDog = await _dbContext.Dogs.FirstOrDefaultAsync(dog => dog.Id == request.Id);
+            return wantedDog;
         }
     }
 }

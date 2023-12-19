@@ -1,4 +1,6 @@
-﻿using Application.Dtos;
+﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
 using Domain.Models;
 using Infrastructure.Database;
 using MediatR;
@@ -7,14 +9,14 @@ namespace Application.Commands.Birds
 {
     public class AddBirdCommandHandler : IRequestHandler<AddBirdCommand, Bird>
     {
-        private readonly MockDatabase _mockDatabase;
+        private readonly CleanApiMainContext _dbContext;
 
-        public AddBirdCommandHandler(MockDatabase mockDatabase)
+        public AddBirdCommandHandler(CleanApiMainContext dbContext)
         {
-            _mockDatabase = mockDatabase;
+            _dbContext = dbContext;
         }
 
-        public Task<Bird> Handle(AddBirdCommand request, CancellationToken cancellationToken)
+        public async Task<Bird> Handle(AddBirdCommand request, CancellationToken cancellationToken)
         {
             var newBird = new Bird
             {
@@ -23,10 +25,10 @@ namespace Application.Commands.Birds
                 CanFly = request.NewBird.CanFly
             };
 
-            _mockDatabase.Birds.Add(newBird);
+            _dbContext.Birds.Add(newBird);
+            await _dbContext.SaveChangesAsync();
 
-            return Task.FromResult(newBird);
+            return newBird;
         }
     }
 }
-

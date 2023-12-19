@@ -2,6 +2,7 @@
 using Application.Commands.Users.RegisterUser;
 using Application.Dtos;
 using Application.Exceptions;
+using Application.Queries.Users;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Authentication;

@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Domain.Models;
 using Domain.Models.User;
+using Domain.Models.Animal;
 
 
 
@@ -16,6 +17,23 @@ namespace Infrastructure.Database
         public virtual DbSet<Bird> Birds { get; set; }
         public virtual DbSet<Cat> Cats { get; set; }
         public virtual DbSet<UserModel> Users { get; set; }
+        public virtual DbSet<UserAnimal> UsersAnimals { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<UserAnimal>()
+                .HasKey(ua => new { ua.UserId, ua.AnimalId });
+
+            modelBuilder.Entity<UserAnimal>()
+                .HasOne(ua => ua.User)
+                .WithMany(u => u.UserAnimals)
+                .HasForeignKey(ua => ua.UserId);
+
+            modelBuilder.Entity<UserAnimal>()
+                .HasOne(ua => ua.Animal)
+                .WithMany(a => a.UserAnimals)
+                .HasForeignKey(ua => ua.AnimalId);
+        }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             string connectionString = "Server=localhost;Port=3306;Database=Cleandb;User=root;Password=12345;";

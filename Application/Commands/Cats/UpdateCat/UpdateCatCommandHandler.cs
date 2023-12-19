@@ -2,29 +2,31 @@
 using Infrastructure.Database;
 using MediatR;
 
-
 namespace Application.Commands.Cats.UpdateCats
 {
     public class UpdateCatCommandHandler : IRequestHandler<UpdateCatCommand, Cat>
     {
-        private readonly MockDatabase _mockDatabase;
+        private readonly CleanApiMainContext _dbContext;
 
-        public UpdateCatCommandHandler(MockDatabase mockDatabase)
+        public UpdateCatCommandHandler(CleanApiMainContext dbContext)
         {
-            _mockDatabase = mockDatabase;
+            _dbContext = dbContext;
         }
 
-        public Task<Cat> Handle(UpdateCatCommand request, CancellationToken cancellationToken)
+        public async Task<Cat> Handle(UpdateCatCommand request, CancellationToken cancellationToken)
         {
-            var catToUpdate = _mockDatabase.Cats.FirstOrDefault(c => c.Id == request.Id);
+            var catToUpdate = _dbContext.Cats.FirstOrDefault(c => c.Id == request.Id);
 
             if (catToUpdate != null)
             {
                 catToUpdate.Name = request.UpdatedCat.Name;
                 catToUpdate.LikesToPlay = request.UpdatedCat.LikesToPlay;
+                await _dbContext.SaveChangesAsync();
             }
 
-            return Task.FromResult(catToUpdate);
+            return catToUpdate;
         }
     }
 }
+
+
