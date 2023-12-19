@@ -12,14 +12,14 @@ namespace Test.CatTests.QueryTests
     public class GetCatByIdQueryHandlerTests
     {
         private GetCatByIdQueryHandler _handler;
-        private MockDatabase _mockDatabase;
+        private CleanApiMainContext _dbContext;
 
         [SetUp]
         public void SetUp()
         {
             // Initialize the handler and mock database before each test
-            _mockDatabase = new MockDatabase();
-            _handler = new GetCatByIdQueryHandler(_mockDatabase);
+            _dbContext = new CleanApiMainContext();
+            _handler = new GetCatByIdQueryHandler(_dbContext);
         }
 
         [Test]

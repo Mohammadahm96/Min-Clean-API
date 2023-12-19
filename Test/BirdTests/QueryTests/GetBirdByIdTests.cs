@@ -10,14 +10,14 @@ namespace Test.BirdTests.GetBirdByIdTests
     public class GetBirdByIdTests
     {
         private GetBirdByIdQueryHandler _handler;
-        private MockDatabase _mockDatabase;
+        private CleanApiMainContext _dbContext;
 
         [SetUp]
         public void SetUp()
         {
             // Initialize the handler and mock database before each test
-            _mockDatabase = new MockDatabase();
-            _handler = new GetBirdByIdQueryHandler(_mockDatabase);
+            _dbContext = new CleanApiMainContext();
+            _handler = new GetBirdByIdQueryHandler(_dbContext);
         }
 
         [Test]
