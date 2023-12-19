@@ -4,10 +4,10 @@ namespace Domain.Models.User
     public class UserAnimal
     {
         public Guid UserId { get; set; }
-        public UserModel User { get; set; }
+        public required UserModel User { get; set; }
 
         public Guid AnimalId { get; set; }
-        public AnimalModel Animal { get; set; }
+        public required AnimalModel Animal { get; set; }
     }
 }
 
