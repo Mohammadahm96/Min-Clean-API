@@ -13,6 +13,7 @@ namespace Application.Commands.Birds.UpdateBird
         }
         public Guid Id { get; }
         public BirdDto UpdatedBird { get; }
+        public Guid UserId { get; internal set; }
     }
 }
 

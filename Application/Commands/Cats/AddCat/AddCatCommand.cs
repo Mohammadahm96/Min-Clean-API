@@ -12,6 +12,7 @@ namespace Application.Commands.Cats
         }
 
         public CatDto NewCat { get; }
+        public Guid UserId { get; internal set; }
     }
 }
 

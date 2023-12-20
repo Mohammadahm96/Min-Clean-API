@@ -1,6 +1,8 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Domain.Models;
+using Domain.Models.User;
 using Infrastructure.Database;
 using MediatR;
 
@@ -27,7 +29,22 @@ namespace Application.Commands.Cats
             _dbContext.Cats.Add(newCat);
             await _dbContext.SaveChangesAsync();
 
+            // Associate the cat with the user
+            await AssociateCatWithUser(request.UserId, newCat.Id);
+
             return newCat;
+        }
+
+        private async Task AssociateCatWithUser(Guid userId, Guid catId)
+        {
+            var user = await _dbContext.Users.FindAsync(userId);
+
+            if (user != null)
+            {
+                var userAnimal = new UserAnimal { UserId = userId, CatId = catId };
+                _dbContext.UsersAnimals.Add(userAnimal);
+                await _dbContext.SaveChangesAsync();
+            }
         }
     }
 }

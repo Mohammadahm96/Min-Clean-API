@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Domain.Models;
+using Domain.Models.User;
 using Infrastructure.Database;
 using MediatR;
 
@@ -28,7 +29,23 @@ namespace Application.Commands.Birds
             _dbContext.Birds.Add(newBird);
             await _dbContext.SaveChangesAsync();
 
+            // Associate the bird with the user
+            await AssociateBirdWithUser(request.UserId, newBird.Id);
+
             return newBird;
+        }
+
+        private async Task AssociateBirdWithUser(Guid userId, Guid birdId)
+        {
+            var user = await _dbContext.Users.FindAsync(userId);
+
+            if (user != null)
+            {
+                var userAnimal = new UserAnimal { UserId = userId, BirdId = birdId };
+                _dbContext.UsersAnimals.Add(userAnimal);
+                await _dbContext.SaveChangesAsync();
+            }
         }
     }
 }
+

@@ -24,7 +24,7 @@ namespace Infrastructure.Repositories
             return user;
         }
 
-        public async Task<UserModel?> GetUserByUsername(string username)
+        public async Task<UserModel> GetUserByUsername(string username)
         {
             return await _dbContext.Users.FirstOrDefaultAsync(u => u.Username == username);
         }

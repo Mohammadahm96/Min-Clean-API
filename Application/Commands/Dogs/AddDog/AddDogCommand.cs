@@ -12,5 +12,6 @@ namespace Application.Commands.Dogs
         }
 
         public DogDto NewDog { get; }
+        public Guid UserId { get; internal set; }
     }
 }

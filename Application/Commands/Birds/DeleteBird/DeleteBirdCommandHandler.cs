@@ -1,31 +1,40 @@
-﻿using Infrastructure.Database;
+﻿using Application.Commands.Birds.DeleteBirds;
+using Infrastructure.Database;
 using MediatR;
 
-namespace Application.Commands.Birds.DeleteBirds
+public class DeleteBirdCommandHandler : IRequestHandler<DeleteBirdCommand, DeleteBirdResult>
 {
-    public class DeleteBirdCommandHandler : IRequestHandler<DeleteBirdCommand, DeleteBirdResult>
+    private readonly CleanApiMainContext _dbContext;
+
+    public DeleteBirdCommandHandler(CleanApiMainContext dbContext)
     {
-        private readonly CleanApiMainContext _dbContext;
+        _dbContext = dbContext;
+    }
 
-        public DeleteBirdCommandHandler(CleanApiMainContext dbContext)
+    public async Task<DeleteBirdResult> Handle(DeleteBirdCommand request, CancellationToken cancellationToken)
+    {
+        var birdToDelete = await _dbContext.Birds.FindAsync(request.BirdId);
+
+        if (birdToDelete != null)
         {
-            _dbContext = dbContext;
+            _dbContext.Birds.Remove(birdToDelete);
+            await _dbContext.SaveChangesAsync();
+
+            // Handle the association with the user (e.g., remove UserAnimal entry)
+            await RemoveBirdUserAssociation(request.UserId, birdToDelete.Id);
+
+            return new DeleteBirdResult { IsSuccess = true };
         }
 
-        public async Task<DeleteBirdResult> Handle(DeleteBirdCommand request, CancellationToken cancellationToken)
-        {
-            var birdToDelete = _dbContext.Birds.FirstOrDefault(b => b.Id == request.BirdId);
+        return new DeleteBirdResult { IsSuccess = false };
+    }
 
-            if (birdToDelete != null)
-            {
-                _dbContext.Birds.Remove(birdToDelete);
-                await _dbContext.SaveChangesAsync();
-                return new DeleteBirdResult { IsSuccess = true };
-            }
-
-            return new DeleteBirdResult { IsSuccess = false };
-        }
+    private async Task RemoveBirdUserAssociation(Guid userId, Guid birdId)
+    {
+        // Handle the association removal logic if needed
+        // This could involve removing UserAnimal entry or any other association logic
     }
 }
+
 
 
