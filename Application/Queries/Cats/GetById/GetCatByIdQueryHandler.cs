@@ -1,28 +1,22 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using Domain.Models;
+﻿using Domain.Models;
 using Infrastructure.Database;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace Application.Queries.Cats.GetCatById
 {
     public class GetCatByIdQueryHandler : IRequestHandler<GetCatByIdQuery, Cat>
     {
-        private readonly CleanApiMainContext _dbContext;
+        private readonly MockDatabase _mockDatabase;
 
-        public GetCatByIdQueryHandler(CleanApiMainContext dbContext)
+        public GetCatByIdQueryHandler(MockDatabase mockDatabase)
         {
-            _dbContext = dbContext;
+            _mockDatabase = mockDatabase;
         }
 
-        public async Task<Cat> Handle(GetCatByIdQuery request, CancellationToken cancellationToken)
+        public Task<Cat> Handle(GetCatByIdQuery request, CancellationToken cancellationToken)
         {
-            Cat wantedCat = await _dbContext.Cats.FirstOrDefaultAsync(cat => cat.Id == request.Id);
-            return wantedCat;
+            Cat wantedCat = _mockDatabase.Cats.FirstOrDefault(cat => cat.Id == request.Id)!;
+            return Task.FromResult(wantedCat);
         }
     }
 }
-
-
-

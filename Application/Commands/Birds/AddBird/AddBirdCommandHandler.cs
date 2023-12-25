@@ -1,8 +1,5 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using Application.Dtos;
 using Domain.Models;
-using Domain.Models.User;
 using Infrastructure.Database;
 using MediatR;
 
@@ -10,14 +7,14 @@ namespace Application.Commands.Birds
 {
     public class AddBirdCommandHandler : IRequestHandler<AddBirdCommand, Bird>
     {
-        private readonly CleanApiMainContext _dbContext;
+        private readonly MockDatabase _mockDatabase;
 
-        public AddBirdCommandHandler(CleanApiMainContext dbContext)
+        public AddBirdCommandHandler(MockDatabase mockDatabase)
         {
-            _dbContext = dbContext;
+            _mockDatabase = mockDatabase;
         }
 
-        public async Task<Bird> Handle(AddBirdCommand request, CancellationToken cancellationToken)
+        public Task<Bird> Handle(AddBirdCommand request, CancellationToken cancellationToken)
         {
             var newBird = new Bird
             {
@@ -26,26 +23,9 @@ namespace Application.Commands.Birds
                 CanFly = request.NewBird.CanFly
             };
 
-            _dbContext.Birds.Add(newBird);
-            await _dbContext.SaveChangesAsync();
+            _mockDatabase.Birds.Add(newBird);
 
-            // Associate the bird with the user
-            await AssociateBirdWithUser(request.UserId, newBird.Id);
-
-            return newBird;
-        }
-
-        private async Task AssociateBirdWithUser(Guid userId, Guid birdId)
-        {
-            var user = await _dbContext.Users.FindAsync(userId);
-
-            if (user != null)
-            {
-                var userAnimal = new UserAnimal { UserId = userId, BirdId = birdId };
-                _dbContext.UsersAnimals.Add(userAnimal);
-                await _dbContext.SaveChangesAsync();
-            }
+            return Task.FromResult(newBird);
         }
     }
 }
-

@@ -7,17 +7,17 @@ namespace Application.Queries.Birds.GetAllBirds
 {
     internal sealed class GetAllBirdsQueryHandler : IRequestHandler<GetAllBirdsQuery, List<Bird>>
     {
-        private readonly CleanApiMainContext _dbContext;
+        private readonly MockDatabase _mockDatabase;
 
-        public GetAllBirdsQueryHandler(CleanApiMainContext dbContext)
+        public GetAllBirdsQueryHandler(MockDatabase mockDatabase)
         {
-            _dbContext = dbContext;
+            _mockDatabase = mockDatabase;
         }
 
         public async Task<List<Bird>> Handle(GetAllBirdsQuery request, CancellationToken cancellationToken)
         {
-            List<Bird> allBirdsFromdbContext = await _dbContext.Birds.ToListAsync();
-            return allBirdsFromdbContext;
+            List<Bird> allBirdsFromMockDatabase = _mockDatabase.Birds;
+            return await Task.FromResult(allBirdsFromMockDatabase);
         }
     }
 }

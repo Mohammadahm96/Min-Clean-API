@@ -1,8 +1,5 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using Application.Dtos;
 using Domain.Models;
-using Domain.Models.User;
 using Infrastructure.Database;
 using MediatR;
 
@@ -10,14 +7,14 @@ namespace Application.Commands.Cats
 {
     internal sealed class AddCatCommandHandler : IRequestHandler<AddCatCommand, Cat>
     {
-        private readonly CleanApiMainContext _dbContext;
+        private readonly MockDatabase _mockDatabase;
 
-        public AddCatCommandHandler(CleanApiMainContext dbContext)
+        public AddCatCommandHandler(MockDatabase mockDatabase)
         {
-            _dbContext = dbContext;
+            _mockDatabase = mockDatabase;
         }
 
-        public async Task<Cat> Handle(AddCatCommand request, CancellationToken cancellationToken)
+        public Task<Cat> Handle(AddCatCommand request, CancellationToken cancellationToken)
         {
             var newCat = new Cat
             {
@@ -26,25 +23,9 @@ namespace Application.Commands.Cats
                 LikesToPlay = request.NewCat.LikesToPlay
             };
 
-            _dbContext.Cats.Add(newCat);
-            await _dbContext.SaveChangesAsync();
+            _mockDatabase.Cats.Add(newCat);
 
-            // Associate the cat with the user
-            await AssociateCatWithUser(request.UserId, newCat.Id);
-
-            return newCat;
-        }
-
-        private async Task AssociateCatWithUser(Guid userId, Guid catId)
-        {
-            var user = await _dbContext.Users.FindAsync(userId);
-
-            if (user != null)
-            {
-                var userAnimal = new UserAnimal { UserId = userId, CatId = catId };
-                _dbContext.UsersAnimals.Add(userAnimal);
-                await _dbContext.SaveChangesAsync();
-            }
+            return Task.FromResult(newCat);
         }
     }
 }

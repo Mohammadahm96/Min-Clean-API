@@ -1,23 +1,22 @@
 ﻿using Domain.Models;
 using Infrastructure.Database;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace Application.Queries.Birds.GetBirdById
 {
     public class GetBirdByIdQueryHandler : IRequestHandler<GetBirdByIdQuery, Bird>
     {
-        private readonly CleanApiMainContext _dbContext;
+        private readonly MockDatabase _mockDatabase;
 
-        public GetBirdByIdQueryHandler(CleanApiMainContext dbContext)
+        public GetBirdByIdQueryHandler(MockDatabase mockDatabase)
         {
-            _dbContext = dbContext;
+            _mockDatabase = mockDatabase;
         }
 
-        public async Task<Bird> Handle(GetBirdByIdQuery request, CancellationToken cancellationToken)
+        public Task<Bird> Handle(GetBirdByIdQuery request, CancellationToken cancellationToken)
         {
-            Bird wantedBird = await _dbContext.Birds.FirstOrDefaultAsync(bird => bird.Id == request.Id);
-            return wantedBird;
+            Bird WantedBird = _mockDatabase.Birds.FirstOrDefault(bird => bird.Id == request.Id)!;
+            return Task.FromResult(WantedBird);
         }
     }
 }
