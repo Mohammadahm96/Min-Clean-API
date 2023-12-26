@@ -1,24 +1,30 @@
 ﻿using Infrastructure.Database;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Domain.Models;
 
 namespace Application.Queries.Birds.GetAllBirds
 {
-    internal sealed class GetAllBirdsQueryHandler : IRequestHandler<GetAllBirdsQuery, List<Bird>>
+    public class GetAllBirdsQueryHandler : IRequestHandler<GetAllBirdsQuery, List<Bird>>
     {
-        private readonly MockDatabase _mockDatabase;
+        private readonly CleanApiMainContext _dbContext;
 
-        public GetAllBirdsQueryHandler(MockDatabase mockDatabase)
+        public GetAllBirdsQueryHandler(CleanApiMainContext dbContext)
         {
-            _mockDatabase = mockDatabase;
+            _dbContext = dbContext;
         }
 
         public async Task<List<Bird>> Handle(GetAllBirdsQuery request, CancellationToken cancellationToken)
         {
-            List<Bird> AllBirdsFromMockDatabase = _mockDatabase.Birds;
-            return await Task.FromResult(AllBirdsFromMockDatabase);
+            List<Bird> allBirdsFromDb = await _dbContext.Birds.ToListAsync();
+            return allBirdsFromDb;
         }
     }
 }
+
 
 

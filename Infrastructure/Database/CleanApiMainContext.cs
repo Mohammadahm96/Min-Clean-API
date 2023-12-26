@@ -17,8 +17,9 @@ namespace Infrastructure.Database
         public virtual DbSet<Cat> Cats { get; set; }
         public virtual DbSet<UserModel> Users { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+
         {
-            string connectionString = "Server=localhost;Port=3306;Database=Cleandb;User=root;Password=12345;";
+            string connectionString = "Server=localhost;Port=3306;Database=MyCleandb;User=root;Password=12345;";
             optionsBuilder.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 32)));
         }
     }

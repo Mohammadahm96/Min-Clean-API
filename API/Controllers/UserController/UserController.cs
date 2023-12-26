@@ -33,7 +33,7 @@ public class UserController : ControllerBase
         {
             return Conflict(ex.Message);
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             // Log the exception
             return StatusCode(500, "Internal Server Error");
@@ -63,7 +63,7 @@ public class UserController : ControllerBase
         {
             return Unauthorized(ex.Message);
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             // Log the exception
             return StatusCode(500, "Internal Server Error");
