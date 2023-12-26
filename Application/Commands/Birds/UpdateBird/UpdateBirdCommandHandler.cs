@@ -1,4 +1,7 @@
-﻿using Application.Dtos;
+﻿using System;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Domain.Models;
 using Infrastructure.Database;
 using MediatR;
@@ -7,23 +10,27 @@ namespace Application.Commands.Birds.UpdateBird
 {
     public class UpdateBirdCommandHandler : IRequestHandler<UpdateBirdCommand, Bird>
     {
-        private readonly MockDatabase _mockDatabase;
+        private readonly CleanApiMainContext _dbContext;
 
-        public UpdateBirdCommandHandler(MockDatabase mockDatabase)
+        public UpdateBirdCommandHandler(CleanApiMainContext dbContext)
         {
-            _mockDatabase = mockDatabase;
+            _dbContext = dbContext;
         }
 
-        public Task<Bird> Handle(UpdateBirdCommand request, CancellationToken cancellationToken)
+        public async Task<Bird> Handle(UpdateBirdCommand request, CancellationToken cancellationToken)
         {
-            var birdToUpdate = _mockDatabase.Birds.FirstOrDefault(c => c.Id == request.Id);
+            var birdToUpdate = _dbContext.Birds.FirstOrDefault(c => c.Id == request.Id);
 
             if (birdToUpdate != null)
             {
                 birdToUpdate.Name = request.UpdatedBird.Name;
                 birdToUpdate.CanFly = request.UpdatedBird.CanFly;
+
+                // Save changes to the database
+                await _dbContext.SaveChangesAsync();
             }
-            return Task.FromResult(birdToUpdate);
+
+            return birdToUpdate;
         }
     }
 }

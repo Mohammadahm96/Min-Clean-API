@@ -9,7 +9,7 @@ namespace Infrastructure
         public static IServiceCollection AddInfrastructure(this IServiceCollection services)
         {
             // Register the MockDatabase (if needed)
-            services.AddSingleton<MockDatabase>();
+            //services.AddSingleton<MockDatabase>();
 
             // Register the DatabaseConfiguration
             //services.AddScoped<IDatabaseConfiguration, DatabaseConfiguration>();
@@ -17,7 +17,7 @@ namespace Infrastructure
             // Register the DbContext
             services.AddDbContext<CleanApiMainContext>(options =>
             {
-                string connectionString = "Server=localhost;Database=Cleandb;User=root;Password=12345;";
+                string connectionString = "Server=localhost;Database=MyCleandb;User=root;Password=12345;";
                 options.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 32)));
             });
 

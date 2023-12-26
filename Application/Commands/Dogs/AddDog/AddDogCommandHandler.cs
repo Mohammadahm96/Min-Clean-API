@@ -1,19 +1,22 @@
 ﻿using Domain.Models;
 using Infrastructure.Database;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Application.Commands.Dogs
 {
     internal sealed class AddDogCommandHandler : IRequestHandler<AddDogCommand, Dog>
     {
-        private readonly MockDatabase _mockDatabase;
+        private readonly CleanApiMainContext _dbContext;
 
-        public AddDogCommandHandler(MockDatabase mockDatabase)
+        public AddDogCommandHandler(CleanApiMainContext dbContext)
         {
-            _mockDatabase = mockDatabase;
+            _dbContext = dbContext;
         }
 
-        public Task<Dog> Handle(AddDogCommand request, CancellationToken cancellationToken)
+        public async Task<Dog> Handle(AddDogCommand request, CancellationToken cancellationToken)
         {
             Dog dogToCreate = new()
             {
@@ -21,9 +24,13 @@ namespace Application.Commands.Dogs
                 Name = request.NewDog.Name
             };
 
-            _mockDatabase.Dogs.Add(dogToCreate);
+            // Add the dog to the actual database context
+            _dbContext.Dogs.Add(dogToCreate);
 
-            return Task.FromResult(dogToCreate);
+            // Save changes to the database
+            await _dbContext.SaveChangesAsync();
+
+            return dogToCreate;
         }
     }
 }

@@ -1,4 +1,7 @@
-﻿using Application.Dtos;
+﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
+using Application.Dtos;
 using Domain.Models;
 using Infrastructure.Database;
 using MediatR;
@@ -7,14 +10,14 @@ namespace Application.Commands.Cats
 {
     internal sealed class AddCatCommandHandler : IRequestHandler<AddCatCommand, Cat>
     {
-        private readonly MockDatabase _mockDatabase;
+        private readonly CleanApiMainContext _dbContext;
 
-        public AddCatCommandHandler(MockDatabase mockDatabase)
+        public AddCatCommandHandler(CleanApiMainContext dbContext)
         {
-            _mockDatabase = mockDatabase;
+            _dbContext = dbContext;
         }
 
-        public Task<Cat> Handle(AddCatCommand request, CancellationToken cancellationToken)
+        public async Task<Cat> Handle(AddCatCommand request, CancellationToken cancellationToken)
         {
             var newCat = new Cat
             {
@@ -23,10 +26,14 @@ namespace Application.Commands.Cats
                 LikesToPlay = request.NewCat.LikesToPlay
             };
 
-            _mockDatabase.Cats.Add(newCat);
+            _dbContext.Cats.Add(newCat);
 
-            return Task.FromResult(newCat);
+            // Save changes to the database
+            await _dbContext.SaveChangesAsync();
+
+            return newCat;
         }
     }
 }
+
 
