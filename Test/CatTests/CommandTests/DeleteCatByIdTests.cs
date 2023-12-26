@@ -17,7 +17,7 @@ namespace Test.CatTests.DeleteCatTests
         {
             // Initialize the handler and mock database before each test
             _mockDatabase = new MockDatabase();
-            _handler = new DeleteCatCommandHandler(_mockDatabase);
+            //_handler = new DeleteCatCommandHandler(_mockDatabase);
         }
 
         [Test]

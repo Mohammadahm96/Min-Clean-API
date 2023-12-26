@@ -17,7 +17,7 @@ namespace Test.BirdTests.GetBirdByIdTests
         {
             // Initialize the handler and mock database before each test
             _mockDatabase = new MockDatabase();
-            _handler = new GetBirdByIdQueryHandler(_mockDatabase);
+            //_handler = new GetBirdByIdQueryHandler(_mockDatabase);
         }
 
         [Test]

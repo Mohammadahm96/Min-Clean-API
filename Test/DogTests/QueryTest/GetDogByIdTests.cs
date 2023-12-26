@@ -14,7 +14,7 @@ namespace Test.DogTests.QueryTest
         {
             // Initialize the handler and mock database before each test
             _mockDatabase = new MockDatabase();
-            _handler = new GetDogByIdQueryHandler(_mockDatabase);
+            //_handler = new GetDogByIdQueryHandler(_mockDatabase);
         }
 
         [Test]

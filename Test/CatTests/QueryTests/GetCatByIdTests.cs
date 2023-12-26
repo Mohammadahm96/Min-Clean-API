@@ -19,7 +19,7 @@ namespace Test.CatTests.QueryTests
         {
             // Initialize the handler and mock database before each test
             _mockDatabase = new MockDatabase();
-            _handler = new GetCatByIdQueryHandler(_mockDatabase);
+            //_handler = new GetCatByIdQueryHandler(_mockDatabase);
         }
 
         [Test]

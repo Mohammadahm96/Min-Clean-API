@@ -17,7 +17,7 @@ namespace Test.BirdTests.DeleteBirdTests
         {
             // Initialize the handler and mock database before each test
             _mockDatabase = new MockDatabase();
-            _handler = new DeleteBirdCommandHandler(_mockDatabase);
+            //_handler = new DeleteBirdCommandHandler(_mockDatabase);
         }
 
         [Test]

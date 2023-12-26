@@ -18,7 +18,7 @@ builder.Services.AddSwaggerGen();
 
 // Min ConnectionString
 var configuration = builder.Configuration;
-var connectionString = configuration.GetConnectionString("Server=localhost;Port=3306;Database=Cleandb;User=root;Password=12345;");
+var connectionString = configuration.GetConnectionString("Server=localhost;Port=3306;Database=MyCleandb;User=root;Password=12345;");
 
 
 builder.Services.AddApplication().AddInfrastructure();
