@@ -53,27 +53,27 @@ namespace API.Controllers.DogsController
         // Create a new dog
         [HttpPost]
         [Route("addNewDog")]
-        public async Task<IActionResult> AddDog([FromBody] DogDto newDog)
+        public async Task<IActionResult> AddDog([FromBody] DogDto newDog, [FromQuery] Guid userId)
         {
-            //Validate Dog
+            // Validate Dog
             var validatedDog = _dogValidator.Validate(newDog);
 
-            //Error handling
+            // Error handling
             if (!validatedDog.IsValid)
             {
                 return BadRequest(validatedDog.Errors.ConvertAll(errors => errors.ErrorMessage));
             }
 
-            //Try Catch
             try
             {
-                return Ok(await _mediator.Send(new AddDogCommand(newDog)));
+                // Add Dog with UserId
+                return Ok(await _mediator.Send(new AddDogCommand(newDog, userId)));
+
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                return BadRequest(ex.Message);
             }
-
         }
 
         // Update a specific dog

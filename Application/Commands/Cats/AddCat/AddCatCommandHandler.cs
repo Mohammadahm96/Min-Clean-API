@@ -28,6 +28,15 @@ namespace Application.Commands.Cats
 
             _dbContext.Cats.Add(newCat);
 
+            // Create ownership relationship
+            var ownership = new Ownership
+            {
+                UserId = request.UserId, // Set the user id
+                AnimalId = newCat.Id
+            };
+
+            _dbContext.Ownerships.Add(ownership);
+
             // Save changes to the database
             await _dbContext.SaveChangesAsync();
 

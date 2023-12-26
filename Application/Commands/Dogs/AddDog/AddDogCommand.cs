@@ -2,15 +2,14 @@
 using Domain.Models;
 using MediatR;
 
-namespace Application.Commands.Dogs
+public class AddDogCommand : IRequest<Dog>
 {
-    public class AddDogCommand : IRequest<Dog>
-    {
-        public AddDogCommand(DogDto newDog)
-        {
-            NewDog = newDog;
-        }
+    public DogDto NewDog { get; }
+    public Guid UserId { get; }
 
-        public DogDto NewDog { get; }
+    public AddDogCommand(DogDto newDog, Guid userId)
+    {
+        NewDog = newDog;
+        UserId = userId;
     }
 }

@@ -1,36 +1,41 @@
-﻿using Domain.Models;
+﻿using Application.Dtos;
+using Domain.Models;
 using Infrastructure.Database;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace Application.Commands.Dogs
+public class AddDogCommandHandler : IRequestHandler<AddDogCommand, Dog>
 {
-    internal sealed class AddDogCommandHandler : IRequestHandler<AddDogCommand, Dog>
+    private readonly CleanApiMainContext _dbContext;
+
+    public AddDogCommandHandler(CleanApiMainContext dbContext)
     {
-        private readonly CleanApiMainContext _dbContext;
+        _dbContext = dbContext;
+    }
 
-        public AddDogCommandHandler(CleanApiMainContext dbContext)
+    public async Task<Dog> Handle(AddDogCommand request, CancellationToken cancellationToken)
+    {
+        var newDog = new Dog
         {
-            _dbContext = dbContext;
-        }
+            Id = Guid.NewGuid(),
+            Name = request.NewDog.Name
+        };
 
-        public async Task<Dog> Handle(AddDogCommand request, CancellationToken cancellationToken)
+        // Add dog to the database
+        _dbContext.Dogs.Add(newDog);
+
+        // Create ownership relationship
+        var ownership = new Ownership
         {
-            Dog dogToCreate = new()
-            {
-                Id = Guid.NewGuid(),
-                Name = request.NewDog.Name
-            };
+            UserId = request.UserId,
+            AnimalId = newDog.Id
+        };
 
-            // Add the dog to the actual database context
-            _dbContext.Dogs.Add(dogToCreate);
+        // Add ownership to the database
+        _dbContext.Ownerships.Add(ownership);
 
-            // Save changes to the database
-            await _dbContext.SaveChangesAsync();
+        await _dbContext.SaveChangesAsync();
 
-            return dogToCreate;
-        }
+        return newDog;
     }
 }
+
