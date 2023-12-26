@@ -39,13 +39,14 @@ namespace API.Controllers.CatsController
         // Create a new cat
         [HttpPost]
         [Route("addNewCat")]
-        public async Task<IActionResult> AddCat([FromBody] CatDto newCat)
+        public async Task<IActionResult> AddCat([FromBody] CatDto newCat, [FromQuery] Guid userId)
         {
             if (newCat == null)
             {
                 return BadRequest("The newCat field is required");
             }
-            return Ok(await _mediator.Send(new AddCatCommand(newCat)));
+            var command = new AddCatCommand(newCat, userId);
+            return Ok(await _mediator.Send(command));
         }
         // Update a specific cat
 

@@ -5,13 +5,21 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Infrastructure.Database;
 using Microsoft.EntityFrameworkCore;
-using Application.Commands.Users.Register;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
+    });
 
-builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -19,7 +27,6 @@ builder.Services.AddSwaggerGen();
 // Min ConnectionString
 var configuration = builder.Configuration;
 var connectionString = configuration.GetConnectionString("Server=localhost;Port=3306;Database=MyCleandb;User=root;Password=12345;");
-
 
 builder.Services.AddApplication().AddInfrastructure();
 

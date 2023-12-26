@@ -2,16 +2,15 @@
 using Domain.Models;
 using MediatR;
 
-namespace Application.Commands.Cats
+public class AddCatCommand : IRequest<Cat>
 {
-    public class AddCatCommand : IRequest<Cat>
-    {
-        public AddCatCommand(CatDto newCat)
-        {
-            NewCat = newCat;
-        }
+    public CatDto NewCat { get; }
+    public Guid UserId { get; }
 
-        public CatDto NewCat { get; }
+    public AddCatCommand(CatDto newCat, Guid userId)
+    {
+        NewCat = newCat;
+        UserId = userId;
     }
 }
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Application.Dtos;
 using Domain.Models;
 using Infrastructure.Database;
 using MediatR;
@@ -25,13 +26,22 @@ namespace Application.Commands.Birds
                 CanFly = request.NewBird.CanFly
             };
 
-            // Add bird to the database context
+            // Add bird to the database
             _dbContext.Birds.Add(newBird);
 
-            // Save changes to the database
+            // Create ownership relationship
+            var ownership = new Ownership
+            {
+                UserId = request.UserId, // Set the user id
+                AnimalId = newBird.Id
+            };
+
+            _dbContext.Ownerships.Add(ownership);
+
             await _dbContext.SaveChangesAsync();
 
             return newBird;
         }
     }
 }
+
