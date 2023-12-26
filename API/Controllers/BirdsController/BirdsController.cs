@@ -39,14 +39,17 @@ namespace API.Controllers.BirdsController
         // Create a new bird
         [HttpPost]
         [Route("addNewBird")]
-        public async Task<IActionResult> AddBird([FromBody] BirdDto newBird)
+        public async Task<IActionResult> AddBird([FromBody] BirdDto newBird, [FromQuery] Guid userId)
         {
             if (newBird == null)
             {
                 return BadRequest("newBird field is required");
             }
-            return Ok(await _mediator.Send(new AddBirdCommand(newBird)));
+
+            var command = new AddBirdCommand(newBird, userId);
+            return Ok(await _mediator.Send(command));
         }
+
 
         // Update a specific bird
         [HttpPut]
