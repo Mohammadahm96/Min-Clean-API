@@ -2,6 +2,10 @@
 using Domain.Models;
 using Infrastructure.Database;
 using MediatR;
+using Application.Exceptions;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 public class AddDogCommandHandler : IRequestHandler<AddDogCommand, Dog>
 {
@@ -14,28 +18,40 @@ public class AddDogCommandHandler : IRequestHandler<AddDogCommand, Dog>
 
     public async Task<Dog> Handle(AddDogCommand request, CancellationToken cancellationToken)
     {
-        var newDog = new Dog
+        try
         {
-            Id = Guid.NewGuid(),
-            Name = request.NewDog.Name
-        };
+            var newDog = new Dog
+            {
+                Id = Guid.NewGuid(),
+                Name = request.NewDog.Name,
+                Weight = request.NewDog.Weight,
+                Breed = request.NewDog.Breed
+            };
 
-        // Add dog to the database
-        _dbContext.Dogs.Add(newDog);
+            // Add dog to the database
+            _dbContext.Dogs.Add(newDog);
 
-        // Create ownership relationship
-        var ownership = new Ownership
+            // Create ownership relationship
+            var ownership = new Ownership
+            {
+                UserId = request.UserId,
+                AnimalId = newDog.Id
+            };
+
+            // Add ownership to the database
+            _dbContext.Ownerships.Add(ownership);
+
+            await _dbContext.SaveChangesAsync();
+
+            return newDog;
+        }
+        catch (Exception ex)
         {
-            UserId = request.UserId,
-            AnimalId = newDog.Id
-        };
+            Console.WriteLine($"Error creating dog: {ex.Message}");
 
-        // Add ownership to the database
-        _dbContext.Ownerships.Add(ownership);
-
-        await _dbContext.SaveChangesAsync();
-
-        return newDog;
+            // Throw a custom exception for better error handling
+            throw new DogCreationException("Error creating dog.", ex);
+        }
     }
 }
 
