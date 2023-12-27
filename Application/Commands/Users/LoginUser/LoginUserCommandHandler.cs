@@ -1,34 +1,47 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Application.Dtos;
+﻿using Application.Commands.Users.Login;
+using Application.Exceptions;
+using Application.Validators.User;
 using Infrastructure.Database;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 
-namespace Application.Commands.Users.Login
+public class LoginUserCommandHandler : IRequestHandler<LoginUserCommand, LoginResponse>
 {
-    public class LoginUserCommandHandler : IRequestHandler<LoginUserCommand, bool>
+    private readonly CleanApiMainContext _dbContext;
+    private readonly LoginUserCommandValidator _Validator;
+
+    public LoginUserCommandHandler(CleanApiMainContext dbContext, LoginUserCommandValidator validator)
     {
-        private readonly CleanApiMainContext _dbContext;
+        _dbContext = dbContext;
+        _Validator = validator;
+    }
 
-        public LoginUserCommandHandler(CleanApiMainContext dbContext)
+    public async Task<LoginResponse> Handle(LoginUserCommand request, CancellationToken cancellationToken)
+    {
+        
+        var validationResult = await _Validator.ValidateAsync(request);
+        if (!validationResult.IsValid)
         {
-            _dbContext = dbContext;
+            
+            var errorMessages = validationResult.Errors.Select(error => error.ErrorMessage).ToList();
+            throw new ValidationException(string.Join("; ", errorMessages));
         }
 
-        public async Task<bool> Handle(LoginUserCommand request, CancellationToken cancellationToken)
+        var user = await _dbContext.Users.SingleOrDefaultAsync(u =>
+            u.Username == request.LoginUser.UserName && u.Userpassword == request.LoginUser.Password);
+
+        if (user == null)
         {
-            var user = await _dbContext.Users.SingleOrDefaultAsync(u => u.Username == request.LoginUser.UserName);
-
-            if (user != null && user.Userpassword == request.LoginUser.Password)
-            {
-                // Successful login
-                return true;
-            }
-
-            // Failed login
-            return false;
+            // User not found or invalid credentials
+            throw new UserNotFoundException(request.LoginUser.UserName);
         }
+
+        // For simplicity, you can create a simple response class to hold both the token and user ID
+        return new LoginResponse
+        {
+            Token = true, // Replace this with your actual token generation logic
+            UserId = user.Id
+        };
     }
 }

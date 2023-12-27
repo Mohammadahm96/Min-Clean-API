@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using Application.Validators.User;
+using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Application
@@ -11,6 +12,8 @@ namespace Application
             services.AddMediatR(configuration => configuration.RegisterServicesFromAssembly(assembly));
 
             services.AddValidatorsFromAssembly(assembly);
+            services.AddValidatorsFromAssemblyContaining<RegisterUserCommandValidator>();
+            services.AddValidatorsFromAssemblyContaining<LoginUserCommandValidator>();
 
             return services;
         }

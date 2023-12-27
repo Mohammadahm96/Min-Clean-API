@@ -1,5 +1,6 @@
 ﻿using Application.Commands.Users.Login;
 using Application.Commands.Users.RegisterUser;
+using Application.Commands.Users.Delete;
 using Application.Dtos;
 using Application.Exceptions;
 using MediatR;
@@ -46,10 +47,10 @@ public class UserController : ControllerBase
         try
         {
             // Send the login command to MediatR
-            var token = await _mediator.Send(new LoginUserCommand(loginUser));
+            var response = await _mediator.Send(new LoginUserCommand(loginUser));
 
-            // Return the token or handle the login success accordingly
-            return Ok(new { Token = token });
+            // Return the token and user ID
+            return Ok(response);
         }
         catch (ArgumentException ex)
         {
@@ -68,5 +69,51 @@ public class UserController : ControllerBase
             // Log the exception
             return StatusCode(500, "Internal Server Error");
         }
+
+    }
+    [HttpPut("updateUser/{userId}")]
+    public async Task<IActionResult> UpdateUser(Guid userId, [FromBody] UserDto updatedUser)
+    {
+        try
+        {
+            var result = await _mediator.Send(new UpdateUserCommand(userId, updatedUser));
+            return Ok(result);
+        }
+        catch (UserIdNotFoundException ex)
+        {
+            return NotFound(ex.Message);
+        }
+        catch (Exception)
+        {
+            // Log the exception
+            return StatusCode(500, "Internal Server Error");
+        }
+    }
+    [HttpDelete("deleteUser/{userId}")]
+    public async Task<IActionResult> DeleteUser(Guid userId)
+    {
+        try
+        {
+            var result = await _mediator.Send(new DeleteUserCommand(userId));
+
+            if (result.IsSuccess)
+            {
+                return Ok(new { IsSuccess = true, Message = result.Message });
+            }
+            else
+            {
+                return NotFound(new { IsSuccess = false, Message = result.Message });
+            }
+        }
+        catch (UserIdNotFoundException ex)
+        {
+            return NotFound(new { IsSuccess = false, Message = ex.Message });
+        }
+        catch (Exception)
+        {
+            // Log the exception
+            return StatusCode(500, "Internal Server Error");
+        }
     }
 }
+
