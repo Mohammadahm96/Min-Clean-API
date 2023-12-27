@@ -21,7 +21,7 @@ public class LoginUserCommandHandler : IRequestHandler<LoginUserCommand, LoginRe
     {
         var validationResult = await _Validator.ValidateAsync(request);
         if (!validationResult.IsValid)
-        {            
+        {
             var errorMessages = validationResult.Errors.Select(error => error.ErrorMessage).ToList();
             throw new ValidationException(string.Join("; ", errorMessages));
         }
