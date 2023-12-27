@@ -19,11 +19,9 @@ public class LoginUserCommandHandler : IRequestHandler<LoginUserCommand, LoginRe
 
     public async Task<LoginResponse> Handle(LoginUserCommand request, CancellationToken cancellationToken)
     {
-        
         var validationResult = await _Validator.ValidateAsync(request);
         if (!validationResult.IsValid)
-        {
-            
+        {            
             var errorMessages = validationResult.Errors.Select(error => error.ErrorMessage).ToList();
             throw new ValidationException(string.Join("; ", errorMessages));
         }

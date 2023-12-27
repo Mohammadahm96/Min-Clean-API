@@ -42,7 +42,6 @@ namespace API.Controllers.CatsController
                 }
             }
         }
-       
 
         // Get a cat by Id
         [HttpGet]
