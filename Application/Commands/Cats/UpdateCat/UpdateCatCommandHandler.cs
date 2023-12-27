@@ -25,6 +25,8 @@ namespace Application.Commands.Cats.UpdateCats
             {
                 catToUpdate.Name = request.UpdatedCat.Name;
                 catToUpdate.LikesToPlay = request.UpdatedCat.LikesToPlay;
+                catToUpdate.Breed = request.UpdatedCat.Breed;
+                catToUpdate.Weight = request.UpdatedCat.Weight;
 
                 // Save changes to the database
                 await _dbContext.SaveChangesAsync();

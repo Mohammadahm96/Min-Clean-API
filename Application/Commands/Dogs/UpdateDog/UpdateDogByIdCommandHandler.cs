@@ -25,6 +25,9 @@ namespace Application.Commands.Dogs.UpdateDog
             if (dogToUpdate != null)
             {
                 dogToUpdate.Name = request.UpdatedDog.Name;
+                dogToUpdate.Breed = request.UpdatedDog.Breed;
+                dogToUpdate.Weight = request.UpdatedDog.Weight;
+
                 await _dbContext.SaveChangesAsync();
             }
 

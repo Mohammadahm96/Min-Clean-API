@@ -23,7 +23,9 @@ namespace Application.Commands.Cats
             {
                 Id = Guid.NewGuid(),
                 Name = request.NewCat.Name,
-                LikesToPlay = request.NewCat.LikesToPlay
+                LikesToPlay = request.NewCat.LikesToPlay,
+                Breed = request.NewCat.Breed, // Add breed property
+                Weight = request.NewCat.Weight // Add weight property
             };
 
             _dbContext.Cats.Add(newCat);
