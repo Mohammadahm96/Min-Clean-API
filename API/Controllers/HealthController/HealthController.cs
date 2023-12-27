@@ -17,15 +17,14 @@ public class HealthController : ControllerBase
     {
         try
         {
-            // Attempt to query a small piece of data from the database
             var result = _dbContext.Users.Any();
 
-            return Ok("Database connection is healthy.");
+            return Ok("Database connection is good.");
         }
         catch (Exception ex)
         {
-            // Log the exception
-            Console.WriteLine($"Database health check failed: {ex.Message}");
+            // Log exception
+            Console.WriteLine($"Database connection check failed: {ex.Message}");
             return StatusCode(500, "Internal Server Error");
         }
     }

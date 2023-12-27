@@ -6,6 +6,8 @@ using Application.Queries.Birds.GetAllBirds;
 using Application.Queries.Birds.GetBirdById;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Application.Validators.Bird;
+using Application.Queries.Dogs.GetAll;
 
 namespace API.Controllers.BirdsController
 {
@@ -14,10 +16,12 @@ namespace API.Controllers.BirdsController
     public class BirdsController : ControllerBase
     {
         internal readonly IMediator _mediator;
+        private readonly BirdValidator _birdValidator;
 
-        public BirdsController(IMediator mediator)
+        public BirdsController(IMediator mediator, BirdValidator birdValidator)
         {
             _mediator = mediator;
+            _birdValidator = birdValidator;
         }
 
         // Get all birds from the database
@@ -25,7 +29,21 @@ namespace API.Controllers.BirdsController
         [Route("getAllBirds")]
         public async Task<IActionResult> GetAllBirds()
         {
-            return Ok(await _mediator.Send(new GetAllBirdsQuery()));
+            {
+                try
+                {
+                    // Försök hämta alla hundar från databasen
+                    var birds = await _mediator.Send(new GetAllBirdsQuery());
+
+                    // Returnera hundarna om hämtningen lyckades
+                    return Ok(birds);
+                }
+                catch (Exception ex)
+                {
+                    // Om det uppstår ett fel, returnera ett felmeddelande
+                    return BadRequest($"Error getting birds: {ex.Message}");
+                }
+            }
         }
 
         // Get a bird by Id
@@ -41,13 +59,24 @@ namespace API.Controllers.BirdsController
         [Route("addNewBird")]
         public async Task<IActionResult> AddBird([FromBody] BirdDto newBird, [FromQuery] Guid userId)
         {
-            if (newBird == null)
+            // Validate Bird
+            var validatedBird = _birdValidator.Validate(newBird);
+
+            // Error handling
+            if (!validatedBird.IsValid)
             {
-                return BadRequest("newBird field is required");
+                return BadRequest(validatedBird.Errors.ConvertAll(errors => errors.ErrorMessage));
             }
 
-            var command = new AddBirdCommand(newBird, userId);
-            return Ok(await _mediator.Send(command));
+            try
+            {
+                // Add Bird with UserId
+                return Ok(await _mediator.Send(new AddBirdCommand(newBird, userId)));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
 
