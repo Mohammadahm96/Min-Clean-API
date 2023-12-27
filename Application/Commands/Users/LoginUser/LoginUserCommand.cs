@@ -3,7 +3,7 @@ using MediatR;
 
 namespace Application.Commands.Users.Login
 {
-    public class LoginUserCommand : IRequest<bool>
+    public class LoginUserCommand : IRequest<LoginResponse>
     {
         public LoginUserCommand(UserDto loginUser)
         {
@@ -12,4 +12,5 @@ namespace Application.Commands.Users.Login
 
         public UserDto LoginUser { get; }
     }
+
 }
