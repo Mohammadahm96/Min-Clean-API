@@ -23,7 +23,8 @@ namespace Application.Commands.Birds
             {
                 Id = Guid.NewGuid(),
                 Name = request.NewBird.Name,
-                CanFly = request.NewBird.CanFly
+                CanFly = request.NewBird.CanFly,
+                Color = request.NewBird.Color // Add color property
             };
 
             // Add bird to the database
@@ -44,4 +45,5 @@ namespace Application.Commands.Birds
         }
     }
 }
+
 

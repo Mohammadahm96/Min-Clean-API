@@ -25,6 +25,7 @@ namespace Application.Commands.Birds.UpdateBird
             {
                 birdToUpdate.Name = request.UpdatedBird.Name;
                 birdToUpdate.CanFly = request.UpdatedBird.CanFly;
+                birdToUpdate.Color = request.UpdatedBird.Color;
 
                 // Save changes to the database
                 await _dbContext.SaveChangesAsync();
