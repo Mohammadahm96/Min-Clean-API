@@ -12,7 +12,6 @@ using NUnit.Framework;
 [TestFixture]
 public class LoginUserNotFound
 {
-    
     [Test]
     public void Handle_UserNotFound_ThrowsUserNotFoundException()
     {

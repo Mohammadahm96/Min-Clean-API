@@ -43,10 +43,9 @@ public class LoginUserCommandHandler : IRequestHandler<LoginUserCommand, LoginRe
             throw new UserNotFoundException(request.LoginUser.UserName);
         }
 
-        
         return new LoginResponse
         {
-            Token = true, 
+            Token = true,
             UserId = user.Id
         };
     }

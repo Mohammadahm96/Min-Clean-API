@@ -33,8 +33,7 @@ public class UserRepository : IUserRepository
         await _dbContext.SaveChangesAsync();
     }
     public async Task UpdateUserAsync(UserModel user)
-    {
-        
+    {   
         _dbContext.Entry(user).State = EntityState.Modified;
         await _dbContext.SaveChangesAsync();
     }
