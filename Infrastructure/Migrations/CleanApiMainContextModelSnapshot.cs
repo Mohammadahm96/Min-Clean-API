@@ -63,6 +63,10 @@ namespace Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
+                    b.Property<string>("Salt")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
                     b.Property<string>("Username")
                         .IsRequired()
                         .HasColumnType("longtext");
@@ -83,7 +87,7 @@ namespace Infrastructure.Migrations
                     b.Property<bool>("CanFly")
                         .HasColumnType("tinyint(1)");
 
-                    b.Property<string>("color")
+                    b.Property<string>("Color")
                         .IsRequired()
                         .HasColumnType("longtext");
 
@@ -115,7 +119,7 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<int?>("Weight")
+                    b.Property<int>("Weight")
                         .HasColumnType("int");
 
                     b.ToTable("AnimalModel", t =>

@@ -1,4 +1,6 @@
 ﻿using Infrastructure.Database;
+using Infrastructure.Repositories.Birds;
+using Infrastructure.Security;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -10,9 +12,11 @@ namespace Infrastructure
         {
             // Register the MockDatabase (if needed)
             //services.AddSingleton<MockDatabase>();
-
-            // Register the DatabaseConfiguration
-            //services.AddScoped<IDatabaseConfiguration, DatabaseConfiguration>();
+            services.AddScoped<IDogRepository, DogRepository>();
+            services.AddScoped<IBirdRepository, BirdRepository>();
+            services.AddScoped<ICatRepository, CatRepository>();
+            services.AddScoped<IPasswordHasher, PasswordHasher>();
+            services.AddScoped<IUserRepository, UserRepository>();
 
             // Register the DbContext
             services.AddDbContext<CleanApiMainContext>(options =>
@@ -25,4 +29,3 @@ namespace Infrastructure
         }
     }
 }
-

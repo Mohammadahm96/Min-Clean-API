@@ -2,59 +2,46 @@
 using Application.Exceptions;
 using Application.Validators.User;
 using Domain.Models.User;
-using Infrastructure.Database;
+using Infrastructure.Security;
 using MediatR;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace Application.Commands.Users.Register
-
+public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, UserModel>
 {
-    public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, UserModel>
+    private readonly IUserRepository _userRepository;
+    private readonly RegisterUserCommandValidator _validator;
+    private readonly IPasswordHasher _passwordHasher;
+
+    public RegisterUserCommandHandler(IUserRepository userRepository, RegisterUserCommandValidator validator, IPasswordHasher passwordHasher)
     {
-        private readonly CleanApiMainContext _dbContext;
-        private readonly RegisterUserCommandValidator _validator;
+        _userRepository = userRepository;
+        _validator = validator;
+        _passwordHasher = passwordHasher;
+    }
 
-        public RegisterUserCommandHandler(CleanApiMainContext dbContext, RegisterUserCommandValidator validator)
+    public async Task<UserModel> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
+    {
+        var registerCommandValidation = _validator.Validate(request);
+
+        if (!registerCommandValidation.IsValid)
         {
-            _dbContext = dbContext;
-            _validator = validator;
+            var allErrors = registerCommandValidation.Errors.ConvertAll(errors => errors.ErrorMessage);
+            throw new ArgumentException("Registration error: " + string.Join("; ", allErrors));
         }
 
-        public async Task<UserModel> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
+        // Hash the user's password
+        var (hash, salt) = _passwordHasher.GeneratePasswordHash(request.NewUser.Password);
+
+        // Here, you can use AutoMapper or manual mapping to convert Dto to Domain Model
+        var userToCreate = new UserModel
         {
-            var registerCommandValidation = _validator.Validate(request);
+            Id = Guid.NewGuid(),
+            Username = request.NewUser.UserName,
+            Userpassword = hash
+        };
 
-            if (!registerCommandValidation.IsValid)
-            {
-                var allErrors = registerCommandValidation.Errors.ConvertAll(errors => errors.ErrorMessage);
-                throw new ArgumentException("Registration error: " + string.Join("; ", allErrors));
-            }
+        // Add user to the repository
+        await _userRepository.AddUser(userToCreate);
 
-            // Check if the username already exists
-            if (_dbContext.Users.Any(u => u.Username == request.NewUser.UserName))
-            {
-                throw new DuplicateUserException(request.NewUser.UserName);
-            }
-
-            // Here, you can use AutoMapper or manual mapping to convert Dto to Domain Model
-            var userToCreate = new UserModel
-            {
-                Id = Guid.NewGuid(),
-                Username = request.NewUser.UserName,
-                Userpassword = request.NewUser.Password,
-            };
-
-            // Add user to the database
-            _dbContext.Users.Add(userToCreate);
-            await _dbContext.SaveChangesAsync();
-
-            return userToCreate;
-        }
+        return userToCreate;
     }
 }
-
-
-
-

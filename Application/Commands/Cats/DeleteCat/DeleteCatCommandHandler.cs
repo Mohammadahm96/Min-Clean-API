@@ -1,6 +1,5 @@
 ﻿using MediatR;
-using Infrastructure.Database;
-using System.Linq;
+using Microsoft.Extensions.Logging;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -8,24 +7,22 @@ namespace Application.Commands.Cats.DeleteCats
 {
     public class DeleteCatCommandHandler : IRequestHandler<DeleteCatCommand, DeleteCatResult>
     {
-        private readonly CleanApiMainContext _dbContext;
+        private readonly ICatRepository _catRepository;
+        private readonly ILogger<DeleteCatCommandHandler> _logger;
 
-        public DeleteCatCommandHandler(CleanApiMainContext dbContext)
+        public DeleteCatCommandHandler(ICatRepository catRepository, ILogger<DeleteCatCommandHandler> logger)
         {
-            _dbContext = dbContext;
+            _catRepository = catRepository;
+            _logger = logger;
         }
 
         public async Task<DeleteCatResult> Handle(DeleteCatCommand request, CancellationToken cancellationToken)
         {
-            var catToDelete = _dbContext.Cats.FirstOrDefault(c => c.Id == request.CatId);
+            var catToDelete = await _catRepository.GetCatById(request.CatId);
 
             if (catToDelete != null)
             {
-                _dbContext.Cats.Remove(catToDelete);
-
-                // Save changes to the database
-                await _dbContext.SaveChangesAsync();
-
+                await _catRepository.DeleteCat(catToDelete);
                 return new DeleteCatResult { IsSuccess = true };
             }
 

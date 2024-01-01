@@ -1,7 +1,5 @@
 ﻿using Infrastructure.Database;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -9,22 +7,21 @@ namespace Application.Commands.Dogs.DeleteDogs
 {
     public class DeleteDogCommandHandler : IRequestHandler<DeleteDogCommand, DeleteDogResult>
     {
-        private readonly CleanApiMainContext _dbContext;
+        private readonly IDogRepository _dogRepository;
 
-        public DeleteDogCommandHandler(CleanApiMainContext dbContext)
+        public DeleteDogCommandHandler(IDogRepository dogRepository)
         {
-            _dbContext = dbContext;
+            _dogRepository = dogRepository;
         }
 
         public async Task<DeleteDogResult> Handle(DeleteDogCommand request, CancellationToken cancellationToken)
         {
-            // Implement logic to delete the dog from the database based on the command
-            var dogToDelete = await _dbContext.Dogs.FirstOrDefaultAsync(d => d.Id == request.DogId);
+            // Implement logic to delete the dog from the repository based on the command
+            var dogToDelete = await _dogRepository.GetDogById(request.DogId);
 
             if (dogToDelete != null)
             {
-                _dbContext.Dogs.Remove(dogToDelete);
-                await _dbContext.SaveChangesAsync();
+                await _dogRepository.DeleteDog(dogToDelete);
                 return new DeleteDogResult { IsSuccess = true };
             }
 

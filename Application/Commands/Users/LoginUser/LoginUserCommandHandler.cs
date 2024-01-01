@@ -1,44 +1,51 @@
 ﻿using Application.Commands.Users.Login;
+using Application.Dtos;
 using Application.Exceptions;
 using Application.Validators.User;
-using Infrastructure.Database;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations;
+using System;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 public class LoginUserCommandHandler : IRequestHandler<LoginUserCommand, LoginResponse>
 {
-    private readonly CleanApiMainContext _dbContext;
-    private readonly LoginUserCommandValidator _Validator;
+    private readonly IUserRepository _userRepository;
+    private readonly LoginUserCommandValidator _validator;
 
-    public LoginUserCommandHandler(CleanApiMainContext dbContext, LoginUserCommandValidator validator)
+    public LoginUserCommandHandler(IUserRepository userRepository, LoginUserCommandValidator validator)
     {
-        _dbContext = dbContext;
-        _Validator = validator;
+        _userRepository = userRepository;
+        _validator = validator;
     }
 
     public async Task<LoginResponse> Handle(LoginUserCommand request, CancellationToken cancellationToken)
     {
-        var validationResult = await _Validator.ValidateAsync(request);
+        var validationResult = await _validator.ValidateAsync(request);
         if (!validationResult.IsValid)
         {
             var errorMessages = validationResult.Errors.Select(error => error.ErrorMessage).ToList();
-            throw new ValidationException(string.Join("; ", errorMessages));
+            throw new Exception(string.Join("; ", errorMessages));
         }
 
-        var user = await _dbContext.Users.SingleOrDefaultAsync(u =>
-            u.Username == request.LoginUser.UserName && u.Userpassword == request.LoginUser.Password);
-
+        // Check if the user exists
+        var user = await _userRepository.GetUserByUsername(request.LoginUser.UserName);
         if (user == null)
         {
-            // User not found or invalid credentials
+            // User not found
             throw new UserNotFoundException(request.LoginUser.UserName);
         }
 
-        // For simplicity, you can create a simple response class to hold both the token and user ID
+        // Now check if the password matches
+        if (user.Userpassword != request.LoginUser.Password)
+        {
+            // Invalid password
+            throw new UserNotFoundException(request.LoginUser.UserName);
+        }
+
         return new LoginResponse
         {
-            Token = true, // Replace this with your actual token generation logic
+            Token = true,
             UserId = user.Id
         };
     }

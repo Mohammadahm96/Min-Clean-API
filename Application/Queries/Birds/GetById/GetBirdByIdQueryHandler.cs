@@ -4,21 +4,22 @@ using System.Threading;
 using System.Threading.Tasks;
 using Domain.Models;
 using Microsoft.EntityFrameworkCore;
+using Infrastructure.Repositories.Birds;
 
 namespace Application.Queries.Birds.GetBirdById
 {
     public class GetBirdByIdQueryHandler : IRequestHandler<GetBirdByIdQuery, Bird>
     {
-        private readonly CleanApiMainContext _dbContext;
+        private readonly IBirdRepository _birdRepository;
 
-        public GetBirdByIdQueryHandler(CleanApiMainContext dbContext)
+        public GetBirdByIdQueryHandler(IBirdRepository birdRepository)
         {
-            _dbContext = dbContext;
+            _birdRepository = birdRepository;
         }
 
         public async Task<Bird> Handle(GetBirdByIdQuery request, CancellationToken cancellationToken)
         {
-            Bird wantedBird = await _dbContext.Birds.FirstOrDefaultAsync(bird => bird.Id == request.Id);
+            Bird wantedBird = await _birdRepository.GetBirdById(request.Id);
             return wantedBird;
         }
     }
