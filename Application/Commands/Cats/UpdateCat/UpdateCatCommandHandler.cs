@@ -1,38 +1,48 @@
-﻿using Domain.Models;
-using Infrastructure.Database;
+﻿using Application.Commands.Cats.UpdateCats;
+using Application.Exceptions;
+using Domain.Models;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
-using System.Linq;
+using Microsoft.Extensions.Logging;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Application.Commands.Cats.UpdateCats
+public class UpdateCatCommandHandler : IRequestHandler<UpdateCatCommand, Cat>
 {
-    public class UpdateCatCommandHandler : IRequestHandler<UpdateCatCommand, Cat>
+    private readonly ICatRepository _catRepository;
+    private readonly ILogger<UpdateCatCommandHandler> _logger;
+
+    public UpdateCatCommandHandler(ICatRepository catRepository, ILogger<UpdateCatCommandHandler> logger)
     {
-        private readonly CleanApiMainContext _dbContext;
+        _catRepository = catRepository;
+        _logger = logger;
+    }
 
-        public UpdateCatCommandHandler(CleanApiMainContext dbContext)
+    public async Task<Cat> Handle(UpdateCatCommand request, CancellationToken cancellationToken)
+    {
+        try
         {
-            _dbContext = dbContext;
-        }
+            var catToUpdate = await _catRepository.GetCatById(request.Id);
 
-        public async Task<Cat> Handle(UpdateCatCommand request, CancellationToken cancellationToken)
-        {
-            var catToUpdate = await _dbContext.Cats.FirstOrDefaultAsync(c => c.Id == request.Id);
-
-            if (catToUpdate != null)
+            if (catToUpdate == null)
             {
-                catToUpdate.Name = request.UpdatedCat.Name;
-                catToUpdate.LikesToPlay = request.UpdatedCat.LikesToPlay;
-                catToUpdate.Breed = request.UpdatedCat.Breed;
-                catToUpdate.Weight = request.UpdatedCat.Weight;
-
-                // Save changes to the database
-                await _dbContext.SaveChangesAsync();
+                // Cat not found
+                throw new CatNotFoundException(request.Id);
             }
 
+            // Update cat properties
+            catToUpdate.Name = request.UpdatedCat.Name;
+            catToUpdate.Breed = request.UpdatedCat.Breed;
+            catToUpdate.Weight = request.UpdatedCat.Weight;
+
+            await _catRepository.UpdateCat(catToUpdate);
+
             return catToUpdate;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error updating cat");
+            throw new CatUpdateException("Error updating cat.", ex);
         }
     }
 }

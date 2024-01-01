@@ -1,37 +1,46 @@
 ﻿using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Domain.Models;
-using Infrastructure.Database;
+using Infrastructure.Repositories.Birds;
 using MediatR;
+using Microsoft.Extensions.Logging;
 
 namespace Application.Commands.Birds.UpdateBird
 {
     public class UpdateBirdCommandHandler : IRequestHandler<UpdateBirdCommand, Bird>
     {
-        private readonly CleanApiMainContext _dbContext;
+        private readonly IBirdRepository _birdRepository;
+        private readonly ILogger<UpdateBirdCommandHandler> _logger;
 
-        public UpdateBirdCommandHandler(CleanApiMainContext dbContext)
+        public UpdateBirdCommandHandler(IBirdRepository birdRepository, ILogger<UpdateBirdCommandHandler> logger)
         {
-            _dbContext = dbContext;
+            _birdRepository = birdRepository;
+            _logger = logger;
         }
 
         public async Task<Bird> Handle(UpdateBirdCommand request, CancellationToken cancellationToken)
         {
-            var birdToUpdate = _dbContext.Birds.FirstOrDefault(c => c.Id == request.Id);
-
-            if (birdToUpdate != null)
+            try
             {
-                birdToUpdate.Name = request.UpdatedBird.Name;
-                birdToUpdate.CanFly = request.UpdatedBird.CanFly;
-                birdToUpdate.Color = request.UpdatedBird.Color;
+                var birdToUpdate = await _birdRepository.GetBirdById(request.Id);
 
-                // Save changes to the database
-                await _dbContext.SaveChangesAsync();
+                if (birdToUpdate != null)
+                {
+                    birdToUpdate.Name = request.UpdatedBird.Name;
+                    birdToUpdate.CanFly = request.UpdatedBird.CanFly;
+                    birdToUpdate.Color = request.UpdatedBird.Color;
+
+                    await _birdRepository.UpdateBird(birdToUpdate);
+                }
+
+                return birdToUpdate;
             }
-
-            return birdToUpdate;
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating bird");
+                throw;
+            }
         }
     }
 }

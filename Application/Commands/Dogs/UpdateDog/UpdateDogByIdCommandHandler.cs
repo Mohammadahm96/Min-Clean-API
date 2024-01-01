@@ -2,7 +2,6 @@
 using Infrastructure.Database;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -10,17 +9,16 @@ namespace Application.Commands.Dogs.UpdateDog
 {
     public class UpdateDogByIdCommandHandler : IRequestHandler<UpdateDogByIdCommand, Dog>
     {
-        private readonly CleanApiMainContext _dbContext;
+        private readonly IDogRepository _dogRepository;
 
-        public UpdateDogByIdCommandHandler(CleanApiMainContext dbContext)
+        public UpdateDogByIdCommandHandler(IDogRepository dogRepository)
         {
-            _dbContext = dbContext;
+            _dogRepository = dogRepository;
         }
 
         public async Task<Dog> Handle(UpdateDogByIdCommand request, CancellationToken cancellationToken)
         {
-            // Implement logic to update the dog in the database based on the command
-            var dogToUpdate = await _dbContext.Dogs.FirstOrDefaultAsync(dog => dog.Id == request.Id);
+            var dogToUpdate = await _dogRepository.GetDogById(request.Id);
 
             if (dogToUpdate != null)
             {
@@ -28,7 +26,7 @@ namespace Application.Commands.Dogs.UpdateDog
                 dogToUpdate.Breed = request.UpdatedDog.Breed;
                 dogToUpdate.Weight = request.UpdatedDog.Weight;
 
-                await _dbContext.SaveChangesAsync();
+                await _dogRepository.UpdateDog(dogToUpdate);
             }
 
             return dogToUpdate;

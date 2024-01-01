@@ -32,15 +32,12 @@ namespace API.Controllers.BirdsController
             {
                 try
                 {
-                    // Försök hämta alla hundar från databasen
                     var birds = await _mediator.Send(new GetAllBirdsQuery());
 
-                    // Returnera hundarna om hämtningen lyckades
                     return Ok(birds);
                 }
                 catch (Exception ex)
                 {
-                    // Om det uppstår ett fel, returnera ett felmeddelande
                     return BadRequest($"Error getting birds: {ex.Message}");
                 }
             }

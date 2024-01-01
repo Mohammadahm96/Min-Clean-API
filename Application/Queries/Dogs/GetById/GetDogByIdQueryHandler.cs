@@ -1,24 +1,22 @@
-﻿using Infrastructure.Database;
-using MediatR;
+﻿using MediatR;
 using System.Threading;
 using System.Threading.Tasks;
 using Domain.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace Application.Queries.Dogs.GetById
 {
     public class GetDogByIdQueryHandler : IRequestHandler<GetDogByIdQuery, Dog>
     {
-        private readonly CleanApiMainContext _dbContext;
+        private readonly IDogRepository _dogRepository;
 
-        public GetDogByIdQueryHandler(CleanApiMainContext dbContext)
+        public GetDogByIdQueryHandler(IDogRepository dogRepository)
         {
-            _dbContext = dbContext;
+            _dogRepository = dogRepository;
         }
 
         public async Task<Dog> Handle(GetDogByIdQuery request, CancellationToken cancellationToken)
         {
-            Dog wantedDog = await _dbContext.Dogs.FirstOrDefaultAsync(dog => dog.Id == request.Id);
+            Dog wantedDog = await _dogRepository.GetDogById(request.Id);
             return wantedDog;
         }
     }
