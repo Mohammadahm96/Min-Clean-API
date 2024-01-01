@@ -1,6 +1,5 @@
 ﻿using Application.Dtos;
 using Domain.Models;
-using Infrastructure.Database;
 using MediatR;
 using Application.Exceptions;
 using System;
@@ -9,11 +8,11 @@ using System.Threading.Tasks;
 
 public class AddDogCommandHandler : IRequestHandler<AddDogCommand, Dog>
 {
-    private readonly CleanApiMainContext _dbContext;
+    private readonly IDogRepository _dogRepository;
 
-    public AddDogCommandHandler(CleanApiMainContext dbContext)
+    public AddDogCommandHandler(IDogRepository dogRepository)
     {
-        _dbContext = dbContext;
+        _dogRepository = dogRepository;
     }
 
     public async Task<Dog> Handle(AddDogCommand request, CancellationToken cancellationToken)
@@ -28,20 +27,8 @@ public class AddDogCommandHandler : IRequestHandler<AddDogCommand, Dog>
                 Breed = request.NewDog.Breed
             };
 
-            // Add dog to the database
-            _dbContext.Dogs.Add(newDog);
-
-            // Create ownership relationship
-            var ownership = new Ownership
-            {
-                UserId = request.UserId,
-                AnimalId = newDog.Id
-            };
-
-            // Add ownership to the database
-            _dbContext.Ownerships.Add(ownership);
-
-            await _dbContext.SaveChangesAsync();
+            // Use the repository to add the dog
+            await _dogRepository.AddDog(newDog, request.UserId);
 
             return newDog;
         }

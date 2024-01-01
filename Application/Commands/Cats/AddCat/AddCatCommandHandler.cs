@@ -3,48 +3,44 @@ using System.Threading;
 using System.Threading.Tasks;
 using Application.Dtos;
 using Domain.Models;
-using Infrastructure.Database;
 using MediatR;
+using Microsoft.Extensions.Logging;
 
 namespace Application.Commands.Cats
 {
-    internal sealed class AddCatCommandHandler : IRequestHandler<AddCatCommand, Cat>
+    public class AddCatCommandHandler : IRequestHandler<AddCatCommand, Cat>
     {
-        private readonly CleanApiMainContext _dbContext;
+        private readonly ICatRepository _catRepository;
+        private readonly ILogger<AddCatCommandHandler> _logger;
 
-        public AddCatCommandHandler(CleanApiMainContext dbContext)
+        public AddCatCommandHandler(ICatRepository catRepository, ILogger<AddCatCommandHandler> logger)
         {
-            _dbContext = dbContext;
+            _catRepository = catRepository;
+            _logger = logger;
         }
 
         public async Task<Cat> Handle(AddCatCommand request, CancellationToken cancellationToken)
         {
-            var newCat = new Cat
+            try
             {
-                Id = Guid.NewGuid(),
-                Name = request.NewCat.Name,
-                LikesToPlay = request.NewCat.LikesToPlay,
-                Breed = request.NewCat.Breed, // Add breed property
-                Weight = request.NewCat.Weight // Add weight property
-            };
+                var newCat = new Cat
+                {
+                    Id = Guid.NewGuid(),
+                    Name = request.NewCat.Name,
+                    LikesToPlay = request.NewCat.LikesToPlay,
+                    Breed = request.NewCat.Breed,
+                    Weight = request.NewCat.Weight
+                };
 
-            _dbContext.Cats.Add(newCat);
+                await _catRepository.AddCat(newCat, request.UserId);
 
-            // Create ownership relationship
-            var ownership = new Ownership
+                return newCat;
+            }
+            catch (Exception ex)
             {
-                UserId = request.UserId, // Set the user id
-                AnimalId = newCat.Id
-            };
-
-            _dbContext.Ownerships.Add(ownership);
-
-            // Save changes to the database
-            await _dbContext.SaveChangesAsync();
-
-            return newCat;
+                _logger.LogError(ex, "Error adding cat");
+                throw new CatCreationException("Error adding cat.", ex);
+            }
         }
     }
 }
-
-

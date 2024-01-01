@@ -1,32 +1,29 @@
-﻿// DeleteUserCommandHandler
+﻿using System.Threading;
+using System.Threading.Tasks;
 using Application.Commands.Users.Delete;
 using Application.Exceptions;
 using Infrastructure.Database;
 using MediatR;
-using System;
 
 namespace Application.Commands.Users.DeleteUser
 {
     public class DeleteUserCommandHandler : IRequestHandler<DeleteUserCommand, DeleteUserResult>
     {
-        private readonly CleanApiMainContext _dbContext;
+        private readonly IUserRepository _userRepository;
 
-        public DeleteUserCommandHandler(CleanApiMainContext dbContext)
+        public DeleteUserCommandHandler(IUserRepository userRepository)
         {
-            _dbContext = dbContext;
+            _userRepository = userRepository;
         }
 
         public async Task<DeleteUserResult> Handle(DeleteUserCommand request, CancellationToken cancellationToken)
         {
-            var userToDelete = _dbContext.Users.FirstOrDefault(u => u.Id == request.UserId);
+            var userToDelete = await _userRepository.GetUserById(request.UserId);
 
             if (userToDelete != null)
             {
-                // Remove user from the database context
-                _dbContext.Users.Remove(userToDelete);
-
-                // Save changes to the database
-                await _dbContext.SaveChangesAsync();
+                // Remove user from the repository
+                await _userRepository.DeleteUserAsync(userToDelete);
 
                 return new DeleteUserResult
                 {
@@ -39,4 +36,3 @@ namespace Application.Commands.Users.DeleteUser
         }
     }
 }
-

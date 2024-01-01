@@ -98,7 +98,7 @@ namespace API.Controllers.DogsController
             // Try Catch
             try
             {
-                var command = new UpdateDogByIdCommand(updatedDog, dogId);
+                var command = new UpdateDogByIdCommand(dogId, updatedDog);
                 var result = await _mediator.Send(command);
 
                 if (result != null)

@@ -1,33 +1,27 @@
 ﻿using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Infrastructure.Database;
+using Infrastructure.Repositories.Birds;
 using MediatR;
 
 namespace Application.Commands.Birds.DeleteBirds
 {
     public class DeleteBirdCommandHandler : IRequestHandler<DeleteBirdCommand, DeleteBirdResult>
     {
-        private readonly CleanApiMainContext _dbContext;
+        private readonly IBirdRepository _birdRepository;
 
-        public DeleteBirdCommandHandler(CleanApiMainContext dbContext)
+        public DeleteBirdCommandHandler(IBirdRepository birdRepository)
         {
-            _dbContext = dbContext;
+            _birdRepository = birdRepository;
         }
 
         public async Task<DeleteBirdResult> Handle(DeleteBirdCommand request, CancellationToken cancellationToken)
         {
-            var birdToDelete = _dbContext.Birds.FirstOrDefault(b => b.Id == request.BirdId);
+            var birdToDelete = await _birdRepository.GetBirdById(request.BirdId);
 
             if (birdToDelete != null)
             {
-                // Remove bird from the database context
-                _dbContext.Birds.Remove(birdToDelete);
-
-                // Save changes to the database
-                await _dbContext.SaveChangesAsync();
-
+                await _birdRepository.DeleteBird(birdToDelete);
                 return new DeleteBirdResult { IsSuccess = true };
             }
 

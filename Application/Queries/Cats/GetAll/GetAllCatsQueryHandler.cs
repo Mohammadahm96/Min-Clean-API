@@ -1,27 +1,24 @@
-﻿using Infrastructure.Database;
+﻿using Application.Queries.Cats.GetAll;
+using Domain.Models;
 using MediatR;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Domain.Models;
-using Microsoft.EntityFrameworkCore;
 
-namespace Application.Queries.Cats.GetAll
+public class GetAllCatsQueryHandler : IRequestHandler<GetAllCatsQuery, List<Cat>>
 {
-    public class GetAllCatsQueryHandler : IRequestHandler<GetAllCatsQuery, List<Cat>>
+    private readonly ICatRepository _catRepository;
+
+    public GetAllCatsQueryHandler(ICatRepository catRepository)
     {
-        private readonly CleanApiMainContext _dbContext;
+        _catRepository = catRepository;
+    }
 
-        public GetAllCatsQueryHandler(CleanApiMainContext dbContext)
-        {
-            _dbContext = dbContext;
-        }
-
-        public async Task<List<Cat>> Handle(GetAllCatsQuery request, CancellationToken cancellationToken)
-        {
-            List<Cat> allCatsFromDatabase = await _dbContext.Cats.ToListAsync();
-            return allCatsFromDatabase;
-        }
+    public async Task<List<Cat>> Handle(GetAllCatsQuery request, CancellationToken cancellationToken)
+    {
+        List<Cat> allCatsFromRepository = await _catRepository.GetAllCats();
+        return allCatsFromRepository;
     }
 }
+
 
