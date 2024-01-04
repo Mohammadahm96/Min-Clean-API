@@ -27,7 +27,7 @@ public class AddDogCommandHandler : IRequestHandler<AddDogCommand, Dog>
                 Breed = request.NewDog.Breed
             };
 
-            // Use the repository to add the dog
+            // Lägger in dog i databas via repository
             await _dogRepository.AddDog(newDog, request.UserId);
 
             return newDog;
@@ -36,7 +36,7 @@ public class AddDogCommandHandler : IRequestHandler<AddDogCommand, Dog>
         {
             Console.WriteLine($"Error creating dog: {ex.Message}");
 
-            // Throw a custom exception for better error handling
+            // Error handler
             throw new DogCreationException("Error creating dog.", ex);
         }
     }

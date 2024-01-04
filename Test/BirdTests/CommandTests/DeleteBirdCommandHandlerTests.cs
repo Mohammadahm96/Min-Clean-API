@@ -20,7 +20,6 @@ public class DeleteBirdCommandHandlerTests
         var birdId = Guid.NewGuid();
         var command = new DeleteBirdCommand { BirdId = birdId };
 
-        // Setup the repository mock to return a bird when GetBirdById is called
         birdRepositoryMock.Setup(repo => repo.GetBirdById(birdId))
                           .ReturnsAsync(new Bird { Id = birdId, Name = "SampleBird" });
 

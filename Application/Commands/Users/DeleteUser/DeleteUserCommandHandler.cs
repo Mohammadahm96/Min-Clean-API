@@ -22,7 +22,7 @@ namespace Application.Commands.Users.DeleteUser
 
             if (userToDelete != null)
             {
-                // Remove user from the repository
+                // Tar bort user från databas via repository
                 await _userRepository.DeleteUserAsync(userToDelete);
 
                 return new DeleteUserResult

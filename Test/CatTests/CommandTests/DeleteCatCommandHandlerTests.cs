@@ -22,7 +22,6 @@ public class DeleteCatCommandHandlerTests
         var catId = Guid.NewGuid();
         var command = new DeleteCatCommand { CatId = catId };
 
-        // Setup the repository mock to return a cat when GetCatById is called
         catRepositoryMock.Setup(repo => repo.GetCatById(catId))
                           .ReturnsAsync(new Cat { Id = catId, Name = "SampleCat" });
 
