@@ -28,10 +28,9 @@ public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, U
             throw new ArgumentException("Registration error: " + string.Join("; ", allErrors));
         }
 
-        // Hash the user's password
+        // Hasar user lösenord
         var (hash, salt) = _passwordHasher.GeneratePasswordHash(request.NewUser.Password);
 
-        // Here, you can use AutoMapper or manual mapping to convert Dto to Domain Model
         var userToCreate = new UserModel
         {
             Id = Guid.NewGuid(),
@@ -39,7 +38,7 @@ public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, U
             Userpassword = hash
         };
 
-        // Add user to the repository
+        // Lägger till user till databas
         await _userRepository.AddUser(userToCreate);
 
         return userToCreate;

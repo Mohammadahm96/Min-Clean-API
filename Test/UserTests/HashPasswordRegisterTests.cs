@@ -44,9 +44,9 @@ public class HashPasswordRegisterTests
         // Assert
         Assert.NotNull(result);
         Assert.That(result.Username, Is.EqualTo(userDto.UserName));
-        Assert.That(result.Userpassword, Is.EqualTo("hashedpassword")); // Use the actual hashed password
+        Assert.That(result.Userpassword, Is.EqualTo("hashedpassword"));
 
-        // Verify that AddUser was called with the correct parameters
+        // Verifying that the AddUser was called with all the correct parameters
         userRepositoryMock.Verify(u => u.AddUser(It.Is<UserModel>(user =>
             user.Username == userDto.UserName &&
             user.Userpassword == "hashedpassword")), Times.Once);

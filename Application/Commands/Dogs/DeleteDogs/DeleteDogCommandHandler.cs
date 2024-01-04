@@ -16,7 +16,6 @@ namespace Application.Commands.Dogs.DeleteDogs
 
         public async Task<DeleteDogResult> Handle(DeleteDogCommand request, CancellationToken cancellationToken)
         {
-            // Implement logic to delete the dog from the repository based on the command
             var dogToDelete = await _dogRepository.GetDogById(request.DogId);
 
             if (dogToDelete != null)

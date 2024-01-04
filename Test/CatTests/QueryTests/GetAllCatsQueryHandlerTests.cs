@@ -20,7 +20,6 @@ public class GetAllCatsQueryHandlerTests
         {
             new Cat { Id = Guid.NewGuid(), Name = "Whiskers", Breed = "Siamese", Weight = 4 },
             new Cat { Id = Guid.NewGuid(), Name = "Fluffy", Breed = "Persian", Weight = 5 },
-            // Add more cats as needed
         };
 
         catRepositoryMock.Setup(repo => repo.GetAllCats()).ReturnsAsync(expectedCats);
