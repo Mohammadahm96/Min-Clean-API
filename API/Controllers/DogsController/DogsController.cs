@@ -112,7 +112,7 @@ namespace API.Controllers.DogsController
             }
             catch (Exception ex)
             {
-                // Här kan du använda ditt eget felmeddelande för exceptions om du vill
+                // Felmeddelande från exception
                 return BadRequest($"Error updating dog: {ex.Message}");
             }
         }

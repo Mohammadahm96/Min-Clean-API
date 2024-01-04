@@ -28,18 +28,18 @@ public class LoginUserCommandHandler : IRequestHandler<LoginUserCommand, LoginRe
             throw new Exception(string.Join("; ", errorMessages));
         }
 
-        // Check if the user exists
+        // Kollar om user existerar
         var user = await _userRepository.GetUserByUsername(request.LoginUser.UserName);
         if (user == null)
         {
-            // User not found
+            // Om user ej existerar skickas exception
             throw new UserNotFoundException(request.LoginUser.UserName);
         }
 
-        // Now check if the password matches
+        // Check om password existerar
         if (user.Userpassword != request.LoginUser.Password)
         {
-            // Invalid password
+            // Invalid lösenord exception
             throw new UserNotFoundException(request.LoginUser.UserName);
         }
 

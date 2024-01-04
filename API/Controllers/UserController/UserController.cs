@@ -46,7 +46,7 @@ public class UserController : ControllerBase
     {
         try
         {
-            // Send the login command to MediatR
+            // Sending the login command to MediatR
             var response = await _mediator.Send(new LoginUserCommand(loginUser));
 
             // Return the token and user ID
@@ -111,7 +111,7 @@ public class UserController : ControllerBase
         }
         catch (Exception)
         {
-            // Log the exception
+            // Logging the exception
             return StatusCode(500, "Internal Server Error");
         }
     }

@@ -23,13 +23,12 @@ public class LoginUserValid
 
         var command = new LoginUserCommand(loginUserDto);
 
-        // Mock the behavior of userRepository to return a valid user
         userRepositoryMock.Setup(u => u.GetUserByUsername(It.IsAny<string>()))
             .ReturnsAsync(new UserModel
             {
                 Id = Guid.NewGuid(),
                 Username = "testuser",
-                Userpassword = "testpassword" // Use the actual password for the test
+                Userpassword = "testpassword"
             });
 
         // Act

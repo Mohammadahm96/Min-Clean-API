@@ -36,7 +36,7 @@ namespace Application.Commands.Birds
                     Color = request.NewBird.Color
                 };
 
-                // Add bird to the database using the repository
+                // Lägger in bird i databas via repository
                 await _birdRepository.AddBird(newBird, request.UserId);
 
                 return newBird;
