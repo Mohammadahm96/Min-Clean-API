@@ -1,5 +1,4 @@
-﻿// In Application.Queries.UserAnimals
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -9,7 +8,7 @@ namespace Application.Queries.UserAnimals
 {
     public class GetAllAssociatedAnimalsQuery : IRequest<List<AssociatedAnimalDto>>
     {
-        
+
     }
 
     public class AssociatedAnimalDto

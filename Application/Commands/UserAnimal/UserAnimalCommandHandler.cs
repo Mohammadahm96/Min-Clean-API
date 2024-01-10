@@ -1,5 +1,4 @@
-﻿// In Application.Handlers.UserAnimals
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using Application.Commands.UserAnimals;
 using Application.Dtos;
