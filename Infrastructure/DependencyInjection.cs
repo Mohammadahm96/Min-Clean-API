@@ -17,6 +17,7 @@ namespace Infrastructure
             services.AddScoped<ICatRepository, CatRepository>();
             services.AddScoped<IPasswordHasher, PasswordHasher>();
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IUserAnimalRepository, UserAnimalRepository>();
 
             // Register the DbContext
             services.AddDbContext<CleanApiMainContext>(options =>
