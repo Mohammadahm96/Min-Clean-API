@@ -8,7 +8,7 @@ using MediatR;
 namespace Application.Queries.UserAnimals
 {
     public class GetAllAssociatedAnimalsQuery : IRequest<List<AssociatedAnimalDto>>
-    {    
+    {
         
     }
 
