@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(CleanApiMainContext))]
-    [Migration("20240101021925_[TestingForNew]")]
-    partial class TestingForNew
+    [Migration("20240111001504_[AddAssociateAnimal]")]
+    partial class AddAssociateAnimal
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -65,6 +65,10 @@ namespace Infrastructure.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("longtext");
 
                     b.Property<string>("Salt")
                         .IsRequired()
