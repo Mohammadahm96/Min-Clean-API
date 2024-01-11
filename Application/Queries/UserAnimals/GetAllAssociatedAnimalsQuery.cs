@@ -15,6 +15,7 @@ namespace Application.Queries.UserAnimals
     {
         public Guid AnimalId { get; set; }
         public string AnimalName { get; set; }
+        public string UserId { get; set; }
     }
 }
 
