@@ -24,6 +24,7 @@ namespace Application.Queries.UserAnimals
                 {
                     AnimalId = o.AnimalId,
                     AnimalName = o.Animal.Name,
+                    UserId = o.UserId.ToString(),
                 })
                 .ToListAsync(cancellationToken);
 
